@@ -1,0 +1,120 @@
+/* Container & Form */
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.signup-form {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Heading */
+.signup-form h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Inputs */
+.signup-form input {
+  margin-bottom: 8px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.signup-form input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Valid/Invalid field borders */
+.valid {
+  border-color: green;
+}
+
+.invalid {
+  border-color: red;
+}
+
+/* Buttons */
+.signup-form button {
+  margin-top: 15px;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Error messages */
+.error {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* Password wrapper (for toggle) */
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
+  font-weight: bold;
+  padding: 0;
+}
+
+/* Password strength meter text */
+.password-strength {
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Password strength colors */
+.password-strength.weak {
+  color: red;
+}
+
+.password-strength.medium {
+  color: orange;
+}
+
+.password-strength.strong {
+  color: green;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 400px) {
+  .signup-form {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}
