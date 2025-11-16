@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../styles/SignupPage.css";
+import { signupUser } from "../api/auth";
+
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -85,32 +87,44 @@ const SignupPage = () => {
     setErrors({ ...errors, [name]: validateField(name, value) });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+      e.preventDefault();
 
-    const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      const error = validateField(key, formData[key]);
-      if (error) newErrors[key] = error;
-    });
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted:", formData);
-      alert("Signup successful!");
-      setFormData({
-        firstname: "",
-        lastname: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
+      const newErrors = {};
+      Object.keys(formData).forEach((key) => {
+        const error = validateField(key, formData[key]);
+        if (error) newErrors[key] = error;
       });
-      setErrors({});
-      setTouched({});
-      setPasswordStrength("");
-    } else {
-      setErrors(newErrors);
-    }
-  };
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+
+      try {
+        const res_data = await signupUser({
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        alert(res_data.message);
+
+        // Reset fields
+        setFormData({
+          firstname: "",
+          lastname: "",
+          email: "",
+          password: "",
+          confirmPassword: ""
+        });
+
+      } catch (err) {
+        alert(err.response?.data?.detail || "Signup failed");
+      }
+    };
+
 
   return (
     <div className="signup-container">
