@@ -121,7 +121,7 @@ const SignupPage = () => {
         });
 
       } catch (err) {
-        alert(err.response?.data?.detail || "Signup failed");
+        alert(err.detail || "Signup failed");
       }
     };
 

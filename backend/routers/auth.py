@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from backend.app.models.models import User
-from backend.app.db.database import users_collection
 from passlib.hash import bcrypt
+from backend.db.database import users_collection
+from backend.models.models import User
 
 router = APIRouter(
     prefix="/auth",   # all routes here will start with /auth
