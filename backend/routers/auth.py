@@ -26,3 +26,15 @@ def signup_user(data: User):
     users_collection.insert_one(new_user)
 
     return {"message": "Signup successful!"}
+
+@router.post("/login")
+def login_user(data: LoginUser):
+
+    user = users_collection.find_one({"email": data.email})
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+
+    if not bcrypt.verify(data.password, user["password"]):
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+
+    return {"message": "Login successful!"}
