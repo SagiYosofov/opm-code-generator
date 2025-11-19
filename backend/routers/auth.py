@@ -1,12 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from passlib.hash import bcrypt
 from db.database import users_collection
-from models.models import User
+from models.models import User, LoginUser
+
 
 router = APIRouter(
     prefix="/auth",   # all routes here will start with /auth
     tags=["Auth"]
 )
+
 
 @router.post("/signup")
 def signup_user(data: User):
@@ -26,6 +28,7 @@ def signup_user(data: User):
     users_collection.insert_one(new_user)
 
     return {"message": "Signup successful!"}
+
 
 @router.post("/login")
 def login_user(data: LoginUser):

@@ -13,9 +13,9 @@ export const signupUser = async (userData) => {
 };
 
 // Login
-export const loginUser = async (data) => {
+export const loginUser = async (userData) => {
   try {
-    const res = await api.post(ENDPOINTS.LOGIN, data);
+    const res = await api.post(ENDPOINTS.LOGIN, userData);
     return res.data;
   } catch (err) {
     throw err.response?.data || { detail: "Login failed" };
