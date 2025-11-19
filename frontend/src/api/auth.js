@@ -1,7 +1,7 @@
-import api from "./api"; // your axios instance
+import api from "./api"; // our axios instance
 import { ENDPOINTS } from "./endpoints";
 
-// Signup wrapper
+// Signup
 export const signupUser = async (userData) => {
   try {
     const res = await api.post(ENDPOINTS.SIGNUP, userData);
@@ -9,5 +9,15 @@ export const signupUser = async (userData) => {
   } catch (err) {
     // Re-throw error so component can catch it
     throw err.response?.data || { detail: "Signup failed" };
+  }
+};
+
+// Login
+export const loginUser = async (data) => {
+  try {
+    const res = await api.post(ENDPOINTS.LOGIN, data);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Login failed" };
   }
 };
