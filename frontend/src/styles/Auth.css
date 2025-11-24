@@ -1,12 +1,7 @@
-/* Container & Form */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+/* src/styles/Auth.css */
 
-.login-form {
+/* === Form Box === */
+.form-box {
   background-color: #fff;
   padding: 40px 30px;
   border-radius: 12px;
@@ -16,15 +11,15 @@
   flex-direction: column;
 }
 
-/* Heading */
-.login-form h2 {
+/* === Headings === */
+.form-box h2 {
   text-align: center;
   margin-bottom: 25px;
   color: #333;
 }
 
-/* Inputs */
-.login-form input {
+/* === Inputs === */
+.form-box input {
   margin-bottom: 8px;
   padding: 12px;
   font-size: 16px;
@@ -34,12 +29,12 @@
   box-sizing: border-box;
 }
 
-.login-form input:focus {
+.form-box input:focus {
   outline: none;
   border-color: #007bff;
 }
 
-/* Valid/Invalid field borders */
+/* === Valid/Invalid Borders === */
 .valid {
   border-color: green;
 }
@@ -48,8 +43,8 @@
   border-color: red;
 }
 
-/* Submit Button */
-.login-form button {
+/* === Buttons === */
+.form-box button {
   margin-top: 15px;
   padding: 12px;
   font-size: 16px;
@@ -61,18 +56,18 @@
   transition: background-color 0.3s ease;
 }
 
-.login-form button:hover {
+.form-box button:hover {
   background-color: #0056b3;
 }
 
-/* Error messages */
+/* === Error Messages === */
 .error {
   color: red;
   font-size: 13px;
   margin-bottom: 10px;
 }
 
-/* Password wrapper for toggle button */
+/* === Password Wrapper & Toggle === */
 .password-wrapper {
   position: relative;
 }
@@ -90,9 +85,28 @@
   padding: 0;
 }
 
-/* Responsive */
+/* === Password Strength Meter === */
+.password-strength {
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.password-strength.weak {
+  color: red;
+}
+
+.password-strength.medium {
+  color: orange;
+}
+
+.password-strength.strong {
+  color: green;
+}
+
+/* === Responsive for Mobile === */
 @media (max-width: 400px) {
-  .login-form {
+  .form-box {
     width: 90%;
     padding: 30px 20px;
   }

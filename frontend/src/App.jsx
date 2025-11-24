@@ -1,4 +1,3 @@
-// src/App.js
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useUser } from "./context/UserContext";
 import Navbar from "./components/Navbar";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../styles/SignupPage.css";
 import { signupUser } from "../api/auth";
+import "../styles/Auth.css";
 
 
 const SignupPage = () => {
@@ -127,8 +127,8 @@ const SignupPage = () => {
 
 
   return (
-    <div className="signup-container">
-      <form className="signup-form" onSubmit={handleSubmit}>
+    <div className="page-container">
+      <form className="form-box" onSubmit={handleSubmit}>
         <h2>Create Account</h2>
 
         <input

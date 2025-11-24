@@ -1,0 +1,19 @@
+/* Reset some defaults */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+}
+
+/* Global layout wrapper for all pages */
+.page-container {
+  width: 100%;
+  min-height: calc(100vh - 60px); /* 60px is your navbar height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}

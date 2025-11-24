@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { loginUser } from "../api/auth";
 import { useUser } from "../context/UserContext";
-import "../styles/LoginPage.css";
+import "../styles/Auth.css";
 
 
 const LoginPage = () => {
@@ -75,8 +75,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
+    <div className="page-container">
+      <form className="form-box" onSubmit={handleSubmit}>
         <h2>Login</h2>
 
         <input
