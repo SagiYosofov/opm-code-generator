@@ -40,4 +40,11 @@ def login_user(data: LoginUser):
     if not bcrypt.verify(data.password, user["password"]):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    return {"message": "Login successful!"}
+    # Build safe user object (no password)
+    user_data = {
+        "firstname": user["firstname"],
+        "lastname": user["lastname"],
+        "email": user["email"]
+    }
+
+    return {"message": "Login successful!", "user": user_data}

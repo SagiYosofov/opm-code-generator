@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import "../styles/LoginPage.css";
 import { loginUser } from "../api/auth";
+import { useUser } from "../context/UserContext";
+import "../styles/Auth.css";
+
 
 const LoginPage = () => {
+  const { login } = useUser(); // get login function from context
+
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -60,17 +64,19 @@ const LoginPage = () => {
     try {
       const res_data = await loginUser(formData);
 
-      alert(res_data.message);
+      login(res_data.user); // save logged-in user to context
 
+      alert(res_data.message);
       setFormData({ email: "", password: "" });
+
     } catch (err) {
       alert(err.detail || "Login failed");
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
+    <div className="page-container">
+      <form className="form-box" onSubmit={handleSubmit}>
         <h2>Login</h2>
 
         <input
