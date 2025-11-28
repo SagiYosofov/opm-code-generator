@@ -17,7 +17,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link to="/opm_upload">OpmUpload</Link>
+            <Link to="/opm_code_generator">OpmCodeGenerator</Link>
             <Link to="/about">About</Link>
             <Link to="/projects">UserProjects</Link>
           </>
