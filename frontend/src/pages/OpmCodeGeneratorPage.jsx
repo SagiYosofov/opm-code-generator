@@ -182,7 +182,14 @@ const OpmCodeGeneratorPage = () => {
   return (
     <div className="page-container">
       <div className="opm-upload-container">
-        <h1 className="page-title">OPMCodeGenerator</h1>
+        <div className="welcome-section">
+          <h1 className="page-title">OPMCodeGenerator</h1>
+          {user && (
+            <p className="welcome-message">
+              Welcome, <span className="user-name">{user.firstname} {user.lastname}</span>! 👋
+            </p>
+          )}
+        </div>
 
         <form onSubmit={handleGenerateCode} className="upload-form">
           {/* Upload Section */}
