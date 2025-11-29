@@ -6,5 +6,5 @@ export const ENDPOINTS = {
   LOGIN: "/auth/login",
 
   // OPM endpoints
-  GENERATE_CODE: "/opm/generate"
+  GENERATE_CODE: "/opm/generate-code"
 };
