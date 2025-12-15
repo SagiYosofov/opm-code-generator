@@ -45,7 +45,7 @@ async def generate_code(
     await file.seek(0)
 
     # Simulated processing
-    time.sleep(5)
+    time.sleep(20)
 
     # -------- RETURN TO FRONTEND --------
     return {"message": "Code generated successfully!"}
