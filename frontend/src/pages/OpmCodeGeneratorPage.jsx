@@ -3,6 +3,8 @@ import { generateCode } from "../api/opm";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/OpmCodeGeneratorPage.css";
+import LoadingModal from "../components/LoadingModal";
+
 
 const OpmCodeGeneratorPage = () => {
   const { user } = useUser();
@@ -181,6 +183,9 @@ const OpmCodeGeneratorPage = () => {
 
   return (
     <div className="page-container">
+      { /* Loading Modal - Shows when isLoading is true */ }
+      <LoadingModal isOpen={isLoading}/>
+
       <div className="opm-upload-container">
         <div className="welcome-section">
           <h1 className="page-title">OPMCodeGenerator</h1>
