@@ -344,7 +344,7 @@ const OpmCodeGeneratorPage = () => {
         <div className="requirements-section">
           <h3 className="requirements-title">Requirements:</h3>
           <ul className="requirements-list">
-            <li>Supported image formats: JPG, JPEG, PNG, GIF</li>
+            <li>Supported image formats: JPG, JPEG, PNG</li>
             <li>Maximum file size: 5MB</li>
           </ul>
         </div>
@@ -354,7 +354,7 @@ const OpmCodeGeneratorPage = () => {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
         onChange={handleFileSelect}
         style={{ display: "none" }}
       />
