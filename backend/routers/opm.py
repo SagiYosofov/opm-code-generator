@@ -8,10 +8,10 @@ router = APIRouter(
     tags=["OPM Code Generator"]
 )
 
+
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 ALLOWED_LANGUAGES = ["python", "java", "csharp", "cpp"]
-
 
 
 def validate_extension(filename: str):
