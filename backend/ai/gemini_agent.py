@@ -38,7 +38,7 @@ class GeminiOPMAgent:
         # The system prompt defined in your previous message
         self.opm_teacher_prompt = OPM_TEACHER_PROMPT
 
-    def _call_gemini(self, contents: list):
+    def _call_gemini(self, contents: list) -> dict:
         """Internal helper to handle the API call and JSON enforcement."""
         response = self.client.models.generate_content(
             model=self.model_id,
@@ -52,7 +52,7 @@ class GeminiOPMAgent:
         except json.JSONDecodeError:
             return {"status": "invalid", "explanation": "Model failed to produce valid JSON."}
 
-    def generate_code_from_diagram(self, diagram_bytes: bytes, filename: str, language: str):
+    def generate_code_from_diagram(self, diagram_bytes: bytes, filename: str, language: str) -> dict:
         """
         Purpose: Main entry point to generate code from a diagram.
         Steps:
@@ -72,7 +72,7 @@ class GeminiOPMAgent:
         ]
         return self._call_gemini(contents)
 
-    def refine_generated_code(self, diagram_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str):
+    def refine_generated_code(self, diagram_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
         """
         Refinement Turn: Updates existing code based on user feedback.
         """
