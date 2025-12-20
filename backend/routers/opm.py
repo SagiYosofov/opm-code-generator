@@ -1,4 +1,3 @@
-import time
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 import os
 
@@ -35,19 +34,18 @@ async def generate_code(
 
     # -------- VALIDATE FILE SIZE --------
     contents = await file.read()
+
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=400,
             detail=f"File exceeds 5MB. Your file is {(len(contents)/1024/1024):.2f}MB."
         )
 
-    # Reset file pointer (important)
-    await file.seek(0)
+    # generate opm code from the image and the selected language
 
-    # Simulated processing
-    time.sleep(20)
+    # save the diagram and the generated code for this specific user in db.
 
-    # -------- RETURN TO FRONTEND --------
-    return {"message": "Code generated successfully!"}
+    # return a file that contains the code / send the json and in the frontend we will create the file.
 
+    # if the language is python the extension of the file should be .py and so on
 
