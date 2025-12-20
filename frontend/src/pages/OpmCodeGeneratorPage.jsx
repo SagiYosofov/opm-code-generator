@@ -153,19 +153,21 @@ const OpmCodeGeneratorPage = () => {
 
       const response_data = await generateCode(formData);
 
-      // Handle successful upload
-      alert("Code generated successfully!");
+      if (response_data.status === "valid") {
+      // Create a Blob from the code string
+      const blob = new Blob([response_data.code], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = response_data.filename; // use filename from backend
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      // If the backend returns a download URL or file data, handle it
-      if (response_data.download_url) {
-        // Trigger file download
-        const link = document.createElement("a");
-        link.href = response_data.download_url;
-        link.download = `opm_generated_${selectedLanguage}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      alert("Code generated successfully!");
+    } else {
+      // Diagram was invalid
+      alert(`Diagram invalid: ${response_data.explanation}`);
+    }
 
       // Reset form
       handleRemoveFile();

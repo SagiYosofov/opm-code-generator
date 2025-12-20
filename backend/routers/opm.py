@@ -1,5 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 import os
+from fastapi.responses import JSONResponse
+from ai.gemini_agent import GeminiOPMAgent  # adjust import path
 
 router = APIRouter(
     prefix="/opm",
@@ -15,14 +17,18 @@ def validate_extension(filename: str):
     return ext in ALLOWED_EXTENSIONS
 
 
+# Initialize Gemini agent once at startup
+ai_agent = GeminiOPMAgent()
+
+
 @router.post("/generate-code")
 async def generate_code(
     file: UploadFile = File(...),
-    language: str = Form(...)
+    target_language: str = Form(...)
 ):
     """
-    Receives an image file of an OPM diagram + selected language.
-    Generates code (placeholder in this example) and returns ZIP file.
+    Receives an image file of an OPM diagram + target language.
+    Generates code using Gemini and returns JSON.
     """
 
     # -------- VALIDATE FILE FORMAT --------
@@ -34,12 +40,27 @@ async def generate_code(
 
     # -------- VALIDATE FILE SIZE --------
     contents = await file.read()
-
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=400,
             detail=f"File exceeds 5MB. Your file is {(len(contents)/1024/1024):.2f}MB."
         )
+
+    # -------- GENERATE CODE VIA GEMINI --------
+    try:
+        # Pass the file bytes and original filename to Gemini
+        result_json = ai_agent.generate_code_from_diagram(
+            diagram_bytes=contents,
+            filename=file.filename,
+            language=target_language
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate code: {str(e)}"
+        )
+
+    return JSONResponse(content=result_json)
 
     # generate opm code from the image and the selected language
 

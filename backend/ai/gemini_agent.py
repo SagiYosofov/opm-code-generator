@@ -53,7 +53,7 @@ class GeminiOPMAgent:
         except json.JSONDecodeError:
             return {"status": "invalid", "explanation": "Model failed to produce valid JSON."}
 
-    def generate_code_from_diagram(self, diagram_bytes: bytes, language: str):
+    def generate_code_from_diagram(self, diagram_bytes: bytes, filename: str, language: str):
         """
         Purpose: Main entry point to generate code from a diagram.
         Steps:
