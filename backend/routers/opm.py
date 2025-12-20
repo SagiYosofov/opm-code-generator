@@ -8,9 +8,11 @@ router = APIRouter(
     tags=["OPM Code Generator"]
 )
 
-# Allowed formats
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"} # set
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+ALLOWED_LANGUAGES = ["python", "java", "csharp", "cpp"]
+
+
 
 def validate_extension(filename: str):
     ext = os.path.splitext(filename)[1].lower()
@@ -30,6 +32,9 @@ async def generate_code(
     Receives an image file of an OPM diagram + target language.
     Generates code using Gemini and returns JSON.
     """
+    # -------- VALIDATE LANGUAGE --------
+    if target_language not in ALLOWED_LANGUAGES:
+        raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
 
     # -------- VALIDATE FILE FORMAT --------
     if not validate_extension(file.filename):
@@ -48,7 +53,7 @@ async def generate_code(
 
     # -------- GENERATE CODE VIA GEMINI --------
     try:
-        # Pass the file bytes and original filename to Gemini
+        # CALL GEMINI
         result_json = ai_agent.generate_code_from_diagram(
             diagram_bytes=contents,
             filename=file.filename,
