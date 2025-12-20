@@ -12,6 +12,12 @@ from ai.prompts import OPM_TEACHER_PROMPT
 load_dotenv()
 
 class GeminiOPMAgent:
+    """
+    This class wraps the Gemini AI client to make it easy to:
+        - Load OPM rules once.
+        - Send diagrams and generate code.
+        - Refine code based on instructions.
+    """
     def __init__(self):
         """
         Initializes the Gemini client and uploads the OPM knowledge base once.
@@ -19,11 +25,12 @@ class GeminiOPMAgent:
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model_id = "gemini-2.0-flash"  # Efficient and free-tier friendly
 
-        # 1. Upload the PDF knowledge base only once during object creation
+
         if not os.path.exists(opm_lecture_pdf_path):
             raise FileNotFoundError(f"Lecture PDF not found at {opm_lecture_pdf_path}")
 
-        # Agent Initialization: Uploading OPM Knowledge Base
+        # Uploads the PDF once and stores it in self.knowledge_base.
+        # This avoids uploading the same PDF every time we send a diagram.
         self.knowledge_base = self.client.files.upload(
             file=opm_lecture_pdf_path,
             config={'display_name': 'OPM_Core_Rules'}
@@ -46,9 +53,15 @@ class GeminiOPMAgent:
         except json.JSONDecodeError:
             return {"status": "invalid", "explanation": "Model failed to produce valid JSON."}
 
-    def generate_from_diagram(self, diagram_bytes: bytes, language: str):
+    def generate_code_from_diagram(self, diagram_bytes: bytes, language: str):
         """
-        First Turn: Initial code generation from an OPM diagram image.
+        Purpose: Main entry point to generate code from a diagram.
+        Steps:
+            - Reuse the persistent PDF knowledge base.
+            - Provide the system prompt.
+            - Include the OPM diagram as bytes (image/png).
+            - Specify the target programming language.
+            - Calls _call_gemini → gets a JSON response with status, code, etc.
         """
         contents = [
             self.knowledge_base,  # Reusing the persistent PDF
