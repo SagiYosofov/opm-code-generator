@@ -1,6 +1,6 @@
 import os
 import json
-
+import mimetypes
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -24,7 +24,6 @@ class GeminiOPMAgent:
         """
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model_id = "gemini-2.0-flash"  # Efficient and free-tier friendly
-
 
         if not os.path.exists(opm_lecture_pdf_path):
             raise FileNotFoundError(f"Lecture PDF not found at {opm_lecture_pdf_path}")
@@ -63,18 +62,22 @@ class GeminiOPMAgent:
             - Specify the target programming language.
             - Calls _call_gemini → gets a JSON response with status, code, etc.
         """
+        mime_type, _ = mimetypes.guess_type(filename)
+
         contents = [
             self.knowledge_base,  # Reusing the persistent PDF
             self.opm_teacher_prompt,
-            types.Part.from_bytes(data=diagram_bytes, mime_type="image/png"),
+            types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
             f"Target Programming Language: {language}"
         ]
         return self._call_gemini(contents)
 
-    def refine_generated_code(self, diagram_bytes: bytes, language: str, previous_code: str, fix_instructions: str):
+    def refine_generated_code(self, diagram_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str):
         """
         Refinement Turn: Updates existing code based on user feedback.
         """
+        mime_type, _ = mimetypes.guess_type(filename)
+
         refinement_context = f"""
         This is a refinement request.
         Target Language: {language}
@@ -88,7 +91,7 @@ class GeminiOPMAgent:
         contents = [
             self.knowledge_base,  # Reusing the persistent PDF
             self.opm_teacher_prompt,
-            types.Part.from_bytes(data=diagram_bytes, mime_type="image/png"),
+            types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
             refinement_context
         ]
         return self._call_gemini(contents)
