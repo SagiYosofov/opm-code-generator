@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 import os
 from fastapi.responses import JSONResponse
-from ai.gemini_agent import GeminiOPMAgent  # adjust import path
+from ai.gemini_agent import GeminiOPMAgent
 
 router = APIRouter(
     prefix="/opm",
