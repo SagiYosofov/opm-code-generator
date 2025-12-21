@@ -149,7 +149,7 @@ const OpmCodeGeneratorPage = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("language", selectedLanguage);
+      formData.append("target_language", selectedLanguage);
 
       const response_data = await generateCode(formData);
 
@@ -164,9 +164,9 @@ const OpmCodeGeneratorPage = () => {
       document.body.removeChild(link);
 
       alert("Code generated successfully!");
-    } else {
-      // Diagram was invalid
-      alert(`Diagram invalid: ${response_data.explanation}`);
+    } else { // Diagram invalid
+      // Show AI explanation in the UI
+      setErrors({ diagram: response_data.explanation || "Diagram is invalid." });
     }
 
       // Reset form
@@ -174,6 +174,7 @@ const OpmCodeGeneratorPage = () => {
       setSelectedLanguage("python");
 
     } catch (err) {
+      // NETWORK / SERVER ERRORS
       const errorMessage = err.detail || err.message || "Failed to generate code";
       setErrors({ submit: errorMessage });
       console.error("Generate Code error:", err);
@@ -338,6 +339,11 @@ const OpmCodeGeneratorPage = () => {
           >
             {isLoading ? "Generating Code..." : "Generate Code"}
           </button>
+
+          {/* Diagram/AI Explanation Error */}
+          {errors.diagram && (
+            <div className="error-alert">{errors.diagram}</div>
+          )}
 
           {/* Submit Error Message */}
           {errors.submit && (
