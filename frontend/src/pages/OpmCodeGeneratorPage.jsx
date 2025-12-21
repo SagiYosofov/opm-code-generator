@@ -149,29 +149,45 @@ const OpmCodeGeneratorPage = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("language", selectedLanguage);
+      formData.append("target_language", selectedLanguage);
+
+      // Log what we are sending
+      console.log("Sending request to backend with:", {
+        filename: file.name,
+        language: selectedLanguage
+      });
 
       const response_data = await generateCode(formData);
 
-      // Handle successful upload
-      alert("Code generated successfully!");
+      // Log exactly what came back from Gemini/Backend
+      console.log("Full Response from Backend:", response_data);
 
-      // If the backend returns a download URL or file data, handle it
-      if (response_data.download_url) {
-        // Trigger file download
-        const link = document.createElement("a");
-        link.href = response_data.download_url;
-        link.download = `opm_generated_${selectedLanguage}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      if (response_data.status === "valid") {
+          console.log("Success! Generated Code Length:", response_data.code?.length);
+          // Create a Blob from the code string
+          const blob = new Blob([response_data.code], { type: "text/plain" });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = response_data.filename; // use filename from backend
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
 
-      // Reset form
-      handleRemoveFile();
-      setSelectedLanguage("python");
+          // Reset form only on success
+          handleRemoveFile();
+          setSelectedLanguage("python");
 
+          alert("Code generated successfully!");
+    } else { // Diagram invalid
+        // Log the AI's reason for invalidation
+        console.warn("AI rejected the diagram:", response_data.explanation);
+      // Show AI explanation in the UI
+      setErrors({ diagram: response_data.explanation || "Diagram is invalid." });
+    }
     } catch (err) {
+      // NETWORK / SERVER ERRORS
+      // Log the specific network or server error
+      console.error("Critical Generate Code Error:", err);
       const errorMessage = err.detail || err.message || "Failed to generate code";
       setErrors({ submit: errorMessage });
       console.error("Generate Code error:", err);
@@ -336,6 +352,11 @@ const OpmCodeGeneratorPage = () => {
           >
             {isLoading ? "Generating Code..." : "Generate Code"}
           </button>
+
+          {/* Diagram/AI Explanation Error */}
+          {errors.diagram && (
+            <div className="error-alert">{errors.diagram}</div>
+          )}
 
           {/* Submit Error Message */}
           {errors.submit && (
