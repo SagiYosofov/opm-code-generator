@@ -23,7 +23,7 @@ class GeminiOPMAgent:
         Initializes the Gemini client and uploads the OPM knowledge base once.
         """
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model_id = "gemini-2.0-flash"  # Efficient and free-tier friendly
+        self.model_id = "gemini-2.5-flash-lite"  # Efficient and free-tier friendly
 
         if not os.path.exists(opm_lecture_pdf_path):
             raise FileNotFoundError(f"Lecture PDF not found at {opm_lecture_pdf_path}")
