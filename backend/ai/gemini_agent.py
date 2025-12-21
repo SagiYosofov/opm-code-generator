@@ -35,7 +35,7 @@ class GeminiOPMAgent:
             config={'display_name': 'OPM_Core_Rules'}
         )
 
-        # The system prompt defined in your previous message
+        # The system prompt
         self.opm_teacher_prompt = OPM_TEACHER_PROMPT
 
     def _call_gemini(self, contents: list) -> dict:
@@ -44,7 +44,7 @@ class GeminiOPMAgent:
             model=self.model_id,
             contents=contents,
             config=types.GenerateContentConfig(
-                response_mime_type="application/json"  # Forces Gemini to follow your JSON schema
+                response_mime_type="application/json"  # Forces Gemini to follow our JSON schema
             )
         )
         try:
