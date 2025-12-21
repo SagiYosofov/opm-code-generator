@@ -6,7 +6,7 @@
 }
 
 .about-container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -16,61 +16,49 @@
   font-weight: bold;
   text-align: center;
   margin-bottom: 4rem;
-  color: #2c3e50; /* צבע מהדף הקודם */
+  color: #2c3e50;
 }
 
-/* Section Styling */
-.supervisor-section,
-.team-section {
-  margin-bottom: 4rem;
-}
-
-.section-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #34495e; /* צבע מהדף הקודם */
+/* Team Grid */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
 /* Person Card */
 .person-card {
-  margin-bottom: 3rem;
-  padding: 1.5rem;
+  padding: 2rem;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .person-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Person Header (Name + Image) */
-.person-header {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.person-name {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #111827;
-  margin: 0;
+/* Person Image Container */
+.person-image-container {
+  margin-bottom: 1.5rem;
 }
 
 .person-image {
-  height: 100px;
-  border-radius: 8px;
+  height: 150px;
+  border-radius: 12px;
   overflow: hidden;
-  flex-shrink: 0;
-  border: 2px solid #e5e7eb;
-  display: flex;
+  border: 3px solid #e5e7eb;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  background: white;
 }
 
 .person-image img {
@@ -79,19 +67,42 @@
   display: block;
 }
 
+/* Person Name */
+.person-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+/* Person Role */
+.person-role {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6366f1;
+  margin: 0 0 0.75rem 0;
+}
+
+.supervisor-role {
+  font-size: 1.1rem;
+  color: #6366f1;
+  font-weight: 700;
+}
+
 /* Person Email */
 .person-email {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #6b7280;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
   font-weight: 500;
 }
 
 /* Person Description */
 .person-description {
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.6;
   color: #374151;
+  text-align: center;
 }
 
 /* Dark Mode Support */
@@ -102,10 +113,6 @@
 
   .page-title {
     color: #f9fafb;
-  }
-
-  .section-title {
-    color: #818cf8;
   }
 
   .person-card {
@@ -130,13 +137,24 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .supervisor-card {
+    order: -1; /* Put supervisor first on mobile */
+  }
+}
+
 @media (max-width: 768px) {
   .page-title {
     font-size: 2rem;
   }
 
-  .section-title {
-    font-size: 1.5rem;
+  .person-card {
+    padding: 1.5rem;
   }
 
   .person-name {
@@ -144,10 +162,6 @@
   }
 
   .person-image {
-    height: 80px;
-  }
-
-  .person-card {
-    padding: 1rem;
+    height: 120px;
   }
 }
