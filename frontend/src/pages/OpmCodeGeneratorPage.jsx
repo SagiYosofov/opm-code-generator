@@ -175,7 +175,15 @@ const OpmCodeGeneratorPage = () => {
 
     } catch (err) {
       // NETWORK / SERVER ERRORS
-      const errorMessage = err.detail || err.message || "Failed to generate code";
+      let errorMessage = "Failed to generate code";
+
+      // Check if it's a Rate Limit error (429)
+      if (err.status === 429 || (err.detail && err.detail.includes("429"))) {
+        errorMessage = "The AI is currently busy (Rate Limit reached). Please wait a moment and try again.";
+      } else {
+        errorMessage = err.detail || err.message || errorMessage;
+      }
+
       setErrors({ submit: errorMessage });
       console.error("Generate Code error:", err);
     } finally {
