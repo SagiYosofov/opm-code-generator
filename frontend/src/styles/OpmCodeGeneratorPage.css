@@ -27,20 +27,20 @@
 }
 
 .welcome-section {
-  margin-bottom: 40px;      /* Space below message */
+  margin-bottom: 40px;
   text-align: center;
 }
 
 .welcome-message {
   font-size: 16px;
-  color: #5a6c7d;          /* Gray text */
+  color: #5a6c7d;
   margin: 0;
   font-weight: 500;
 }
 
 .user-name {
-  color: #4caf50;          /* Blue */
-  font-weight: 700;        /* Bold */
+  color: #4caf50;
+  font-weight: 700;
 }
 
 .upload-form {
@@ -253,11 +253,23 @@
 .error-alert {
   background: #fed7d7;
   border-left: 4px solid #e53e3e;
-  padding: 12px 16px;
+  padding: 16px 20px;
   border-radius: 4px;
   color: #c53030;
   font-size: 14px;
   margin-top: 10px;
+}
+
+.error-alert-title {
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #c53030;
+}
+
+.error-alert-message {
+  margin: 0;
+  line-height: 1.5;
+  color: #c53030;
 }
 
 /* ============ Language Selection Section ============ */
@@ -503,18 +515,4 @@
 .generate-button:focus {
   outline: 2px solid #1565c0;
   outline-offset: 2px;
-}
-
-/* ============ Loading State ============ */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.generate-button:disabled {
-  position: relative;
 }
