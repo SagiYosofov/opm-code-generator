@@ -37,7 +37,7 @@ const AboutPage = () => {
             <div className="person-image-container">
               <div className="person-image">
                 <img
-                  src="/images/natali.jpg"
+                  src="/images/natali.jpeg"
                   alt="Dr. Natali Levi"
                   loading="lazy"
                 />
