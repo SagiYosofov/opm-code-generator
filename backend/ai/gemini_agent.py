@@ -54,13 +54,21 @@ class GeminiOPMAgent:
 
     def generate_code_from_diagram(self, diagram_bytes: bytes, filename: str, language: str) -> dict:
         """
-        Purpose: Main entry point to generate code from a diagram.
-        Steps:
-            - Reuse the persistent PDF knowledge base.
-            - Provide the system prompt.
-            - Include the OPM diagram as bytes (image/png).
-            - Specify the target programming language.
-            - Calls _call_gemini → gets a JSON response with status, code, etc.
+        Main entry point to generate code from a diagram.
+
+        Args:
+            diagram_bytes: The binary content of the OPM diagram image
+            filename: The original filename of the diagram
+            language: Target programming language (python, java, csharp, cpp)
+
+        Returns:
+            {
+                "status": "valid" | "invalid",
+                "explanation": "human-readable explanation",
+                "code": "generated code skeleton" (only if valid),
+                "filename": "output filename" (only if valid)
+                "language": (need to remove from prompt)
+            }
         """
         mime_type, _ = mimetypes.guess_type(filename)
 
@@ -75,6 +83,22 @@ class GeminiOPMAgent:
     def refine_generated_code(self, diagram_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
         """
         Refinement Turn: Updates existing code based on user feedback.
+
+        Args:
+            diagram_bytes: The binary content of the OPM diagram image
+            filename: The original filename of the diagram
+            language: Target programming language
+            previous_code: The previously generated code skeleton
+            fix_instructions: User's instructions for refining the code
+
+        Returns:
+            {
+                "status": "valid" | "invalid",
+                "explanation": "human-readable explanation",
+                "code": "refined code skeleton" (only if valid),
+                "filename": "output filename" (only if valid)
+                "language": (need to remove from prompt)
+            }
         """
         mime_type, _ = mimetypes.guess_type(filename)
 

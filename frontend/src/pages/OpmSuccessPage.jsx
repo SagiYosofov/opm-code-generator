@@ -1,76 +1,85 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { refineCode } from "../api/opm";
-import LoadingModal from "../components/LoadingModal";
 import "../styles/OpmSuccessPage.css";
+import LoadingModal from "../components/LoadingModal";
 
 const OpmSuccessPage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Data passed from OpmCodeGeneratorPage
-  const {
-    code,
-    filename,
-    explanation,
-    diagramFile,
-    language
-  } = location.state || {};
+  // Get state from navigation
+  const state = location.state;
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showFixInstructions, setShowFixInstructions] = useState(false);
-  const [fixInstructionsText, setFixInstructionsText] = useState("");
-  const [currentCode, setCurrentCode] = useState(code);
-  const [currentExplanation, setCurrentExplanation] = useState(explanation);
-  const [refinementError, setRefinementError] = useState(null);
-
-  // Redirect if no data
-  if (!code || !filename || !explanation) {
+  // Validate we have required data
+  if (!state || !state.code || !state.explanation) {
     return (
-      <div className="error-container">
-        <p>No code generation data found. Please start over.</p>
-        <button onClick={() => navigate("/")}>Back to Upload</button>
+      <div className="page-container">
+        <div className="error-container">
+          <h2>Error: Missing Data</h2>
+          <p>No code generation data found. Please generate code first.</p>
+          <button className="action-button" onClick={() => navigate("/")}>
+            Return to Code Generator
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Auto-download function
-  const downloadFile = (fileContent, fileName) => {
-    const blob = new Blob([fileContent], { type: "text/plain" });
+  const [currentCode, setCurrentCode] = useState(state.code);
+  const [currentExplanation, setCurrentExplanation] = useState(state.explanation);
+  const [showFixInstructions, setShowFixInstructions] = useState(false);
+  const [fixInstructions, setFixInstructions] = useState("");
+  const [isRefining, setIsRefining] = useState(false);
+  const [refinementError, setRefinementError] = useState("");
+
+  // Auto-download initial code on mount
+  useEffect(() => {
+    downloadCode(state.code, state.filename);
+  }, []);
+
+  const downloadCode = (code, filename) => {
+    const blob = new Blob([code], { type: "text/plain" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = fileName;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Handle initial page load - auto-download
-  React.useEffect(() => {
-    downloadFile(code, filename);
-  }, []);
+  const handleAddFixInstructions = () => {
+    setShowFixInstructions(true);
+    setRefinementError("");
+    setFixInstructions("");
+  };
 
-  // Handle sending fix instructions
+  const handleCancelFixInstructions = () => {
+    setShowFixInstructions(false);
+    setFixInstructions("");
+    setRefinementError("");
+  };
+
   const handleSendFixInstructions = async () => {
-    if (!fixInstructionsText.trim()) {
-      setRefinementError("Please enter fix instructions.");
+    if (!fixInstructions.trim()) {
+      setRefinementError("Please enter fix instructions");
       return;
     }
 
-    setIsLoading(true);
-    setRefinementError(null);
+    setIsRefining(true);
+    setRefinementError("");
 
     try {
       const formData = new FormData();
-      formData.append("file", diagramFile);
-      formData.append("target_language", language);
+      formData.append("file", state.diagramFile);
+      formData.append("target_language", state.language);
       formData.append("previous_code", currentCode);
-      formData.append("fix_instructions", fixInstructionsText);
+      formData.append("fix_instructions", fixInstructions);
 
       console.log("Sending refinement request with:", {
-        language,
-        fixInstructions: fixInstructionsText,
-        previousCodeLength: currentCode.length
+        filename: state.diagramFile.name,
+        language: state.language,
+        instructions: fixInstructions
       });
 
       const response_data = await refineCode(formData);
@@ -79,133 +88,129 @@ const OpmSuccessPage = () => {
 
       if (response_data.status === "valid") {
         // Success - update code and explanation
+        console.log("Refinement successful!");
         setCurrentCode(response_data.code);
         setCurrentExplanation(response_data.explanation);
-        setFixInstructionsText("");
+
+        // Auto-download refined code
+        downloadCode(response_data.code, response_data.filename);
+
+        // Close fix instructions area
         setShowFixInstructions(false);
-        setRefinementError(null);
-
-        // Auto-download the refined code
-        downloadFile(response_data.code, response_data.filename);
-
-        alert("Code refined successfully!");
+        setFixInstructions("");
       } else {
-        // Invalid or error - show explanation but preserve current code
-        setCurrentExplanation(response_data.explanation);
-        setRefinementError(response_data.explanation);
-        // Keep fixInstructionsText visible so user can modify
+        // Refinement failed - show error explanation, keep previous code
+        console.warn("Refinement rejected:", response_data.explanation);
+        setRefinementError(response_data.explanation || "Could not apply fix instructions.");
+        // Keep fix instructions visible for user to modify
       }
     } catch (err) {
-      console.error("Refinement error:", err);
-      const errorMsg = err.detail || err.message || "Failed to refine code";
-      setRefinementError(errorMsg);
-      setCurrentExplanation(errorMsg);
+      console.error("Refinement Error:", err);
+      const errorMessage = err.detail || err.message || "Failed to refine code";
+      setRefinementError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsRefining(false);
     }
   };
 
-  const handleCancelFixInstructions = () => {
-    setFixInstructionsText("");
-    setShowFixInstructions(false);
-    setRefinementError(null);
-    setCurrentExplanation(explanation); // Restore original explanation
-  };
-
-  const handleUploadNewDiagram = () => {
-    navigate("/");
-  };
-
   return (
-    <div className="success-page-container">
-      <LoadingModal isOpen={isLoading} />
+    <div className="page-container">
+      <LoadingModal isOpen={isRefining} />
 
-      {/* Fix Instructions Panel - Shows above main content when active */}
-      {showFixInstructions && (
-        <div className="fix-instructions-panel">
-          <div className="fix-instructions-content">
-            <h3 className="fix-instructions-title">Refine Generated Code</h3>
-            <p className="fix-instructions-subtitle">
-              Describe what changes you'd like to make to the generated code
-            </p>
+      <div className="success-container">
+        {/* Fix Instructions Section - appears above main content when activated */}
+        {showFixInstructions && (
+          <div className="fix-instructions-section">
+            <div className="fix-instructions-header">
+              <h2>Add Fix Instructions</h2>
+              <p>Describe what changes you'd like to make to the generated code.</p>
+            </div>
 
             <textarea
               className="fix-instructions-textarea"
-              placeholder="Example: Add error handling to the main function, or use more descriptive variable names..."
-              value={fixInstructionsText}
-              onChange={(e) => setFixInstructionsText(e.target.value)}
-              rows="5"
+              placeholder="Enter your fix instructions here..."
+              value={fixInstructions}
+              onChange={(e) => setFixInstructions(e.target.value)}
+              rows="6"
             />
 
             {refinementError && (
-              <div className="refinement-error">
-                {refinementError}
+              <div className="refinement-error-alert">
+                <p className="error-alert-title">Fix Instructions Could Not Be Applied</p>
+                <p className="error-alert-message">{refinementError}</p>
               </div>
             )}
 
             <div className="fix-instructions-actions">
               <button
-                className="btn btn-primary"
+                className="action-button send-button"
                 onClick={handleSendFixInstructions}
-                disabled={isLoading || !fixInstructionsText.trim()}
+                disabled={isRefining || !fixInstructions.trim()}
               >
-                {isLoading ? "Refining..." : "Send"}
+                {isRefining ? "Applying..." : "Send"}
               </button>
               <button
-                className="btn btn-secondary"
+                className="action-button cancel-button"
                 onClick={handleCancelFixInstructions}
-                disabled={isLoading}
+                disabled={isRefining}
               >
                 Cancel
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main Success Content */}
-      <div className="success-content">
-        <div className="success-header">
-          <div className="success-icon">✓</div>
-          <h1 className="success-title">Code Generated Successfully!</h1>
-        </div>
-
-        {/* AI Explanation - Always Visible */}
-        <div className="explanation-section">
-          <h2 className="explanation-title">AI Analysis & Explanation</h2>
-          <div className="explanation-box">
-            <p className="explanation-text">{currentExplanation}</p>
+        {/* Main Success Content */}
+        <div className="success-content">
+          {/* AI Explanation - always visible */}
+          <div className="explanation-section">
+            <div className="explanation-header">
+              <h2>AI Analysis</h2>
+              <div className="explanation-badge">Generated</div>
+            </div>
+            <div className="explanation-text">
+              {currentExplanation}
+            </div>
           </div>
-        </div>
 
-        {/* Generated Code Display */}
-        <div className="code-section">
-          <div className="code-header">
-            <h3 className="code-title">Generated Code</h3>
-            <span className="code-filename">{filename}</span>
+          {/* Generated Code Display */}
+          <div className="code-section">
+            <div className="code-header">
+              <h2>Generated Code</h2>
+              <span className="code-language">{state.language.toUpperCase()}</span>
+            </div>
+            <div className="code-display">
+              <pre>
+                <code>{currentCode}</code>
+              </pre>
+            </div>
+            <button
+              className="copy-button"
+              onClick={() => {
+                navigator.clipboard.writeText(currentCode);
+                alert("Code copied to clipboard!");
+              }}
+            >
+              📋 Copy Code
+            </button>
           </div>
-          <pre className="code-display">
-            <code>{currentCode}</code>
-          </pre>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="action-buttons">
-          <button
-            className="btn btn-primary"
-            onClick={handleUploadNewDiagram}
-          >
-            Upload New Diagram
-          </button>
-          <button
-            className="btn btn-secondary"
-            onClick={() => {
-              setShowFixInstructions(true);
-              setRefinementError(null);
-            }}
-          >
-            Add Fix Instructions
-          </button>
+          {/* Action Buttons */}
+          <div className="success-actions">
+            <button
+              className="action-button primary-button"
+              onClick={() => navigate("/")}
+            >
+              ↺ Upload New Diagram
+            </button>
+            <button
+              className="action-button secondary-button"
+              onClick={handleAddFixInstructions}
+              disabled={isRefining}
+            >
+              ✏️ Add Fix Instructions
+            </button>
+          </div>
         </div>
       </div>
     </div>

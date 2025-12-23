@@ -163,7 +163,7 @@ const OpmCodeGeneratorPage = () => {
         console.log("Success! Generated Code Length:", response_data.code?.length);
 
         // Navigate to success page with state
-        navigate("/success", {
+        navigate("/opm_success", {
           state: {
             explanation: response_data.explanation,
             code: response_data.code,

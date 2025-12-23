@@ -31,6 +31,15 @@ async def generate_code(
     """
     Receives an image file of an OPM diagram + target language.
     Generates code using Gemini and returns JSON.
+
+     Response:
+    {
+        "status": "valid" | "invalid",
+        "explanation": "human-readable explanation",
+        "code": "generated code" (only if status is valid),
+        "filename": "output_filename.ext" (only if status is valid)
+        "language": (need to remove from prompt)
+    }
     """
     # -------- VALIDATE LANGUAGE --------
     if target_language not in ALLOWED_LANGUAGES:
@@ -75,3 +84,66 @@ async def generate_code(
 
     # if the language is python the extension of the file should be .py and so on
 
+
+@router.post("/refine-code")
+async def refine_code(
+        file: UploadFile = File(...),
+        target_language: str = Form(...),
+        previous_code: str = Form(...),
+        fix_instructions: str = Form(...)
+):
+    """
+    Receives an OPM diagram, previously generated code, and fix instructions.
+    Refines the code using Gemini and returns JSON.
+
+    Response:
+    {
+        "status": "valid" | "invalid",
+        "explanation": "human-readable explanation",
+        "code": "refined code" (only if status is valid),
+        "filename": "output_filename.ext" (only if status is valid)
+        "language": (need to remove from prompt)
+    }
+    """
+    # -------- VALIDATE LANGUAGE --------
+    if target_language not in ALLOWED_LANGUAGES:
+        raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
+
+    # -------- VALIDATE FILE FORMAT --------
+    if not validate_extension(file.filename):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file format. Allowed: JPG, JPEG, PNG"
+        )
+
+    # -------- VALIDATE FILE SIZE --------
+    contents = await file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"File exceeds 5MB. Your file is {(len(contents) / 1024 / 1024):.2f}MB."
+        )
+
+    # -------- VALIDATE INPUT --------
+    if not previous_code.strip():
+        raise HTTPException(status_code=400, detail="Previous code is required")
+
+    if not fix_instructions.strip():
+        raise HTTPException(status_code=400, detail="Fix instructions are required")
+
+    # -------- REFINE CODE VIA GEMINI --------
+    try:
+        result_json = ai_agent.refine_generated_code(
+            diagram_bytes=contents,
+            filename=file.filename,
+            language=target_language,
+            previous_code=previous_code,
+            fix_instructions=fix_instructions
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to refine code: {str(e)}"
+        )
+
+    return JSONResponse(content=result_json)
