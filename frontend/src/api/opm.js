@@ -14,3 +14,17 @@ export const generateCode = async (formData) => {
     throw err.response?.data || { detail: "Failed to upload OPM diagram" };
   }
 };
+
+/**
+ * Send fix instructions to refine previously generated code
+ * @param {FormData} formData - Form data containing file, language, previous code, and fix instructions
+ * @returns {Promise} Response data with refined code or error explanation
+ */
+export const refineCode = async (formData) => {
+  try {
+    const res = await api.post(ENDPOINTS.REFINE_CODE, formData);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Failed to refine code" };
+  }
+};

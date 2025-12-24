@@ -56,7 +56,6 @@ OPM_TEACHER_PROMPT = """
     
     {
       "status": "valid" | "invalid",
-      "language": "<python | java | csharp | cpp>",
       "filename": "<main executable filename with correct extension according to language>",
       "code": "<full executable source code as a single string>",
       "explanation": "<brief 1-3 sentence technical description of OPM-to-code mapping>"

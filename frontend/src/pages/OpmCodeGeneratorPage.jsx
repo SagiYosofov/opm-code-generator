@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import "../styles/OpmCodeGeneratorPage.css";
 import LoadingModal from "../components/LoadingModal";
 
-
 const OpmCodeGeneratorPage = () => {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -151,7 +150,6 @@ const OpmCodeGeneratorPage = () => {
       formData.append("file", file);
       formData.append("target_language", selectedLanguage);
 
-      // Log what we are sending
       console.log("Sending request to backend with:", {
         filename: file.name,
         language: selectedLanguage
@@ -159,38 +157,30 @@ const OpmCodeGeneratorPage = () => {
 
       const response_data = await generateCode(formData);
 
-      // Log exactly what came back from Gemini/Backend
       console.log("Full Response from Backend:", response_data);
 
       if (response_data.status === "valid") {
-          console.log("Success! Generated Code Length:", response_data.code?.length);
-          // Create a Blob from the code string
-          const blob = new Blob([response_data.code], { type: "text/plain" });
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = response_data.filename; // use filename from backend
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+        console.log("Success! Generated Code Length:", response_data.code?.length);
 
-          // Reset form only on success
-          handleRemoveFile();
-          setSelectedLanguage("python");
-
-          alert("Code generated successfully!");
-    } else { // Diagram invalid
-        // Log the AI's reason for invalidation
+        // Navigate to success page with state
+        navigate("/opm_success", {
+          state: {
+            explanation: response_data.explanation,
+            code: response_data.code,
+            filename: response_data.filename,
+            language: selectedLanguage,
+            diagramFile: file
+          }
+        });
+      } else {
+        // Diagram is invalid - show explanation on this page
         console.warn("AI rejected the diagram:", response_data.explanation);
-      // Show AI explanation in the UI
-      setErrors({ diagram: response_data.explanation || "Diagram is invalid." });
-    }
+        setErrors({ diagram: response_data.explanation || "Diagram is invalid." });
+      }
     } catch (err) {
-      // NETWORK / SERVER ERRORS
-      // Log the specific network or server error
       console.error("Critical Generate Code Error:", err);
       const errorMessage = err.detail || err.message || "Failed to generate code";
       setErrors({ submit: errorMessage });
-      console.error("Generate Code error:", err);
     } finally {
       setIsLoading(false);
       setUploadProgress(0);
@@ -199,8 +189,7 @@ const OpmCodeGeneratorPage = () => {
 
   return (
     <div className="page-container">
-      { /* Loading Modal - Shows when isLoading is true */ }
-      <LoadingModal isOpen={isLoading}/>
+      <LoadingModal isOpen={isLoading} />
 
       <div className="opm-upload-container">
         <div className="welcome-section">
@@ -353,9 +342,12 @@ const OpmCodeGeneratorPage = () => {
             {isLoading ? "Generating Code..." : "Generate Code"}
           </button>
 
-          {/* Diagram/AI Explanation Error */}
+          {/* Diagram/AI Explanation Error - shown only when diagram is invalid */}
           {errors.diagram && (
-            <div className="error-alert">{errors.diagram}</div>
+            <div className="error-alert">
+              <p className="error-alert-title">Diagram Analysis Failed</p>
+              <p className="error-alert-message">{errors.diagram}</p>
+            </div>
           )}
 
           {/* Submit Error Message */}
