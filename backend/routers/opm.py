@@ -38,7 +38,6 @@ async def generate_code(
         "explanation": "human-readable explanation",
         "code": "generated code" (only if status is valid),
         "filename": "output_filename.ext" (only if status is valid)
-        "language": (need to remove from prompt)
     }
     """
     # -------- VALIDATE LANGUAGE --------
@@ -102,7 +101,6 @@ async def refine_code(
         "explanation": "human-readable explanation",
         "code": "refined code" (only if status is valid),
         "filename": "output_filename.ext" (only if status is valid)
-        "language": (need to remove from prompt)
     }
     """
     # -------- VALIDATE LANGUAGE --------

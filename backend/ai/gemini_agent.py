@@ -67,7 +67,6 @@ class GeminiOPMAgent:
                 "explanation": "human-readable explanation",
                 "code": "generated code skeleton" (only if valid),
                 "filename": "output filename" (only if valid)
-                "language": (need to remove from prompt)
             }
         """
         mime_type, _ = mimetypes.guess_type(filename)
@@ -97,7 +96,6 @@ class GeminiOPMAgent:
                 "explanation": "human-readable explanation",
                 "code": "refined code skeleton" (only if valid),
                 "filename": "output filename" (only if valid)
-                "language": (need to remove from prompt)
             }
         """
         mime_type, _ = mimetypes.guess_type(filename)
