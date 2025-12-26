@@ -14,7 +14,6 @@ const OpmCodeGeneratorPage = () => {
   const [isDragActive, setIsDragActive] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const fileInputRef = useRef(null);
 
@@ -123,7 +122,6 @@ const OpmCodeGeneratorPage = () => {
   const handleRemoveFile = () => {
     setFile(null);
     setErrors({});
-    setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -183,7 +181,6 @@ const OpmCodeGeneratorPage = () => {
       setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
-      setUploadProgress(0);
     }
   };
 
@@ -296,14 +293,6 @@ const OpmCodeGeneratorPage = () => {
                       ✕
                     </button>
                   </div>
-                  {uploadProgress > 0 && uploadProgress < 100 && (
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${uploadProgress}%` }}
-                      ></div>
-                    </div>
-                  )}
                 </>
               )}
             </div>
