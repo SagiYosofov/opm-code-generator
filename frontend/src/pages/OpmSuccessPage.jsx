@@ -8,10 +8,8 @@ const OpmSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get state from navigation
   const state = location.state;
 
-  // Validate we have required data
   if (!state || !state.code || !state.explanation) {
     return (
       <div className="page-container">
@@ -82,33 +80,17 @@ const OpmSuccessPage = () => {
       formData.append("previous_code", currentCode);
       formData.append("fix_instructions", fixInstructions);
 
-      console.log("Sending refinement request with:", {
-        filename: state.diagramFile.name,
-        language: state.language,
-        instructions: fixInstructions
-      });
-
       const response_data = await refineCode(formData);
 
-      console.log("Refinement Response:", response_data);
-
       if (response_data.status === "valid") {
-        // Success - update code and explanation
-        console.log("Refinement successful!");
         setCurrentCode(response_data.code);
         setCurrentExplanation(response_data.explanation);
-
-        // Close fix instructions area
         setShowFixInstructions(false);
         setFixInstructions("");
       } else {
-        // Refinement failed - show error explanation, keep previous code
-        console.warn("Refinement rejected:", response_data.explanation);
         setRefinementError(response_data.explanation || "Could not apply fix instructions.");
-        // Keep fix instructions visible for user to modify
       }
     } catch (err) {
-      console.error("Refinement Error:", err);
       const errorMessage = err.detail || err.message || "Failed to refine code";
       setRefinementError(errorMessage);
     } finally {
@@ -116,67 +98,33 @@ const OpmSuccessPage = () => {
     }
   };
 
+  // Reusable upload button component
+  const uploadButton = (
+    <button
+      className="action-button primary-button upload-button-below"
+      onClick={() => navigate("/")}
+      aria-label="Upload a new OPM diagram for code generation"
+    >
+      ↺ Upload New Diagram
+    </button>
+  );
+
   return (
     <div className="page-container">
       <LoadingModal isOpen={isRefining} />
 
       <div className="success-container">
-        {/* Fix Instructions Section - appears above main content when activated */}
-        {showFixInstructions && (
-          <div className="fix-instructions-section">
-            <div className="fix-instructions-header">
-              <h2>Add Fix Instructions</h2>
-              <p>Describe what changes you'd like to make to the generated code.</p>
-            </div>
-
-            <textarea
-              className="fix-instructions-textarea"
-              placeholder="Enter your fix instructions here..."
-              value={fixInstructions}
-              onChange={(e) => setFixInstructions(e.target.value)}
-              rows="6"
-            />
-
-            {refinementError && (
-              <div className="refinement-error-alert">
-                <p className="error-alert-title">Fix Instructions Could Not Be Applied</p>
-                <p className="error-alert-message">{refinementError}</p>
-              </div>
-            )}
-
-            <div className="fix-instructions-actions">
-              <button
-                className="action-button send-button"
-                onClick={handleSendFixInstructions}
-                disabled={isRefining || !fixInstructions.trim()}
-              >
-                {isRefining ? "Applying..." : "Send"}
-              </button>
-              <button
-                className="action-button cancel-button"
-                onClick={handleCancelFixInstructions}
-                disabled={isRefining}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Main Success Content */}
         <div className="success-content">
-          {/* AI Explanation - always visible */}
+          {/* AI Explanation */}
           <div className="explanation-section">
             <div className="explanation-header">
               <h2>AI Analysis</h2>
               <div className="explanation-badge">Generated</div>
             </div>
-            <div className="explanation-text">
-              {currentExplanation}
-            </div>
+            <div className="explanation-text">{currentExplanation}</div>
           </div>
 
-          {/* Generated Code Display */}
+          {/* Generated Code */}
           <div className="code-section">
             <div className="code-header">
               <h2>Generated Code</h2>
@@ -191,12 +139,14 @@ const OpmSuccessPage = () => {
               <button
                 className={`copy-button ${copyFeedback ? "feedback" : ""}`}
                 onClick={handleCopy}
+                aria-label="Copy generated code to clipboard"
               >
                 {copyFeedback ? "✓ Copied!" : "📋 Copy Code"}
               </button>
               <button
                 className="download-button"
                 onClick={handleDownloadCode}
+                aria-label={`Download generated code as ${state.language} file`}
               >
                 ⬇️ Download Code
               </button>
@@ -204,20 +154,75 @@ const OpmSuccessPage = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="success-actions">
-            <button
-              className="action-button primary-button"
-              onClick={() => navigate("/")}
-            >
-              ↺ Upload New Diagram
-            </button>
-            <button
-              className="action-button secondary-button"
-              onClick={handleAddFixInstructions}
-              disabled={isRefining}
-            >
-              ✏️ Add Fix Instructions
-            </button>
+          <div className="success-actions-wrapper">
+            {!showFixInstructions && (
+              <div className="success-actions">
+                <button
+                  className="action-button primary-button"
+                  onClick={() => navigate("/")}
+                  aria-label="Upload a new OPM diagram for code generation"
+                >
+                  ↺ Upload New Diagram
+                </button>
+                <button
+                  className="action-button secondary-button"
+                  onClick={handleAddFixInstructions}
+                  disabled={isRefining}
+                  aria-label="Add fix instructions to refine the generated code"
+                >
+                  ✏️ Add Fix Instructions
+                </button>
+              </div>
+            )}
+
+            {showFixInstructions && (
+              <>
+                <div className="inline-fix-instructions">
+                  <div className="inline-fix-header">
+                    <h3>Add Fix Instructions</h3>
+                    <p>Describe what changes you'd like to make to the generated code.</p>
+                  </div>
+
+                  <textarea
+                    className="fix-instructions-textarea"
+                    placeholder="Enter your fix instructions here..."
+                    value={fixInstructions}
+                    onChange={(e) => setFixInstructions(e.target.value)}
+                    rows="6"
+                    autoFocus
+                    aria-label="Enter instructions for refining the code"
+                  />
+
+                  {refinementError && (
+                    <div className="refinement-error-alert" role="alert">
+                      <p className="error-alert-title">Fix Instructions Could Not Be Applied</p>
+                      <p className="error-alert-message">{refinementError}</p>
+                    </div>
+                  )}
+
+                  <div className="inline-fix-actions">
+                    <button
+                      className="action-button send-button"
+                      onClick={handleSendFixInstructions}
+                      disabled={isRefining || !fixInstructions.trim()}
+                      aria-label="Send fix instructions to refine the code"
+                    >
+                      {isRefining ? "Applying..." : "Send"}
+                    </button>
+                    <button
+                      className="action-button cancel-button"
+                      onClick={handleCancelFixInstructions}
+                      disabled={isRefining}
+                      aria-label="Cancel and discard fix instructions"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                {uploadButton}
+              </>
+            )}
           </div>
         </div>
       </div>
