@@ -250,10 +250,17 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  transition: all 0.2s ease;
   font-family: inherit;
   background: #f0f7ff;
   color: #2196f3;
+}
+
+.copy-button {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.download-button {
+  transition: all 0.2s ease;
 }
 
 .copy-button.feedback {
