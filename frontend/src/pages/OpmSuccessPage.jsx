@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { refineCode } from "../api/opm";
 import "../styles/OpmSuccessPage.css";
@@ -33,11 +33,6 @@ const OpmSuccessPage = () => {
   const [isRefining, setIsRefining] = useState(false);
   const [refinementError, setRefinementError] = useState("");
 
-  // Auto-download initial code on mount
-  useEffect(() => {
-    downloadCode(state.code, state.filename);
-  }, []);
-
   const downloadCode = (code, filename) => {
     const blob = new Blob([code], { type: "text/plain" });
     const link = document.createElement("a");
@@ -46,6 +41,10 @@ const OpmSuccessPage = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDownloadCode = () => {
+    downloadCode(currentCode, state.filename);
   };
 
   const handleAddFixInstructions = () => {
@@ -91,9 +90,6 @@ const OpmSuccessPage = () => {
         console.log("Refinement successful!");
         setCurrentCode(response_data.code);
         setCurrentExplanation(response_data.explanation);
-
-        // Auto-download refined code
-        downloadCode(response_data.code, response_data.filename);
 
         // Close fix instructions area
         setShowFixInstructions(false);
@@ -184,15 +180,23 @@ const OpmSuccessPage = () => {
                 <code>{currentCode}</code>
               </pre>
             </div>
-            <button
-              className="copy-button"
-              onClick={() => {
-                navigator.clipboard.writeText(currentCode);
-                alert("Code copied to clipboard!");
-              }}
-            >
-              📋 Copy Code
-            </button>
+            <div className="code-actions">
+              <button
+                className="copy-button"
+                onClick={() => {
+                  navigator.clipboard.writeText(currentCode);
+                  alert("Code copied to clipboard!");
+                }}
+              >
+                📋 Copy Code
+              </button>
+              <button
+                className="download-button"
+                onClick={handleDownloadCode}
+              >
+                ⬇️ Download Code
+              </button>
+            </div>
           </div>
 
           {/* Action Buttons */}

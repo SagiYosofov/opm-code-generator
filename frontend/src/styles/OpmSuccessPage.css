@@ -235,27 +235,36 @@
   color: #e2e8f0;
 }
 
-.copy-button {
-  align-self: flex-start;
+/* ============ Code Actions ============ */
+.code-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.copy-button,
+.download-button {
   padding: 8px 16px;
-  background: #f0f7ff;
   border: 2px solid #2196f3;
-  color: #2196f3;
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
   font-family: inherit;
+  background: #f0f7ff;
+  color: #2196f3;
 }
 
-.copy-button:hover {
+.copy-button:hover,
+.download-button:hover {
   background: #2196f3;
   color: white;
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 }
 
-.copy-button:active {
+.copy-button:active,
+.download-button:active {
   transform: scale(0.95);
 }
 
@@ -379,16 +388,21 @@
     font-size: 12px;
   }
 
+  .code-actions {
+    flex-direction: column;
+  }
+
+  .copy-button,
+  .download-button {
+    width: 100%;
+    justify-content: center;
+  }
+
   .success-actions {
     flex-direction: column;
   }
 
   .action-button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .copy-button {
     width: 100%;
     justify-content: center;
   }
@@ -430,6 +444,12 @@
     font-size: 12px;
   }
 
+  .copy-button,
+  .download-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
   .explanation-text {
     font-size: 13px;
   }
@@ -441,7 +461,8 @@
   outline-offset: 2px;
 }
 
-.copy-button:focus {
+.copy-button:focus,
+.download-button:focus {
   outline: 2px solid #2196f3;
   outline-offset: 2px;
 }
