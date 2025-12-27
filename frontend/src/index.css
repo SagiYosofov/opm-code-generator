@@ -2,6 +2,7 @@
 body, html {
   margin: 0;
   padding: 0;
+  padding-top: 60px; /* Matches navbar height - CRITICAL for fixed navbar */
   font-family: Arial, sans-serif;
   background: #f5f6fa;
   color: #333;
