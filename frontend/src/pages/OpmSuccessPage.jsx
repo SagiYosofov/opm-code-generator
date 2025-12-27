@@ -32,6 +32,7 @@ const OpmSuccessPage = () => {
   const [fixInstructions, setFixInstructions] = useState("");
   const [isRefining, setIsRefining] = useState(false);
   const [refinementError, setRefinementError] = useState("");
+  const [copyFeedback, setCopyFeedback] = useState(false);
 
   const downloadCode = (code, filename) => {
     const blob = new Blob([code], { type: "text/plain" });
@@ -41,6 +42,12 @@ const OpmSuccessPage = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(currentCode);
+    setCopyFeedback(true);
+    setTimeout(() => setCopyFeedback(false), 1500);
   };
 
   const handleDownloadCode = () => {
@@ -182,13 +189,10 @@ const OpmSuccessPage = () => {
             </div>
             <div className="code-actions">
               <button
-                className="copy-button"
-                onClick={() => {
-                  navigator.clipboard.writeText(currentCode);
-                  alert("Code copied to clipboard!");
-                }}
+                className={`copy-button ${copyFeedback ? "feedback" : ""}`}
+                onClick={handleCopy}
               >
-                📋 Copy Code
+                {copyFeedback ? "✓ Copied!" : "📋 Copy Code"}
               </button>
               <button
                 className="download-button"

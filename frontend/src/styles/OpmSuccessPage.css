@@ -256,11 +256,22 @@
   color: #2196f3;
 }
 
+.copy-button.feedback {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
 .copy-button:hover,
 .download-button:hover {
   background: #2196f3;
   color: white;
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.copy-button.feedback:hover {
+  background: #4caf50;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .copy-button:active,
