@@ -41,8 +41,6 @@ const SignupPage = () => {
       case "password":
         if (!value) return "Password is required";
         if (value.length < 6) return "Password must be at least 6 characters";
-        if (formData.confirmPassword && value !== formData.confirmPassword)
-          return "Passwords do not match";
         break;
       case "confirmPassword":
         if (!value) return "Confirm your password";
@@ -60,24 +58,27 @@ const SignupPage = () => {
 
     if (name === "password") {
       setPasswordStrength(evaluatePasswordStrength(value));
-    }
 
-    if (touched[name]) {
-      setErrors({ ...errors, [name]: validateField(name, value) });
-
-      // Also validate password/confirmPassword relationship
-      if (name === "password" && touched.confirmPassword) {
+      // If confirmPassword is touched and password changes, revalidate confirmPassword
+      if (touched.confirmPassword) {
         setErrors((prev) => ({
           ...prev,
           confirmPassword: validateField("confirmPassword", formData.confirmPassword)
         }));
       }
-      if (name === "confirmPassword" && touched.password) {
-        setErrors((prev) => ({
-          ...prev,
-          password: validateField("password", formData.password)
-        }));
-      }
+    }
+
+    // When confirmPassword changes, revalidate it
+    if (name === "confirmPassword" && touched.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validateField("confirmPassword", value)
+      }));
+    }
+
+    // Validate other fields normally
+    if (touched[name] && name !== "password" && name !== "confirmPassword") {
+      setErrors({ ...errors, [name]: validateField(name, value) });
     }
   };
 
