@@ -52,38 +52,3 @@ body, html {
     min-height: calc(100vh - var(--navbar-height-sm, 120px));
   }
 }
-
-/*
-IMPORTANT: How This Works
-═════════════════════════
-
-1. CSS Variables are defined in Navbar.css :root:
-   --navbar-height-lg: 60px   (Desktop)
-   --navbar-height-sm: 120px  (Mobile)
-
-2. This file uses those variables:
-   padding-top: var(--navbar-height-lg, 60px)
-
-3. When you change the variable value:
-   :root { --navbar-height-lg: 80px }
-
-4. All uses of that variable update automatically:
-   padding-top: 80px (automatic!)
-   min-height: calc(100vh - 80px) (automatic!)
-
-5. Fallback values (60px, 120px) ensure the site
-   works even if variables fail to load.
-
-CHANGING NAVBAR HEIGHT
-══════════════════════
-
-Desktop (>600px):
-  1. Edit Navbar.css: --navbar-height-lg: 60px → --navbar-height-lg: 80px
-  2. Done! This file automatically uses the new value
-
-Mobile (≤600px):
-  1. Edit Navbar.css: --navbar-height-sm: 120px → --navbar-height-sm: 150px
-  2. Done! This file automatically uses the new value
-
-No need to edit this file!
-*/
