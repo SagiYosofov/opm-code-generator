@@ -2,7 +2,14 @@
 body, html {
   margin: 0;
   padding: 0;
-  padding-top: 60px; /* Matches navbar height - CRITICAL for fixed navbar */
+
+  /*
+    CSS Variable: --navbar-height-lg
+    Fallback: 60px (if variable not set)
+    Updates when @media breakpoint changes
+  */
+  padding-top: var(--navbar-height-lg, 60px);
+
   font-family: Arial, sans-serif;
   background: #f5f6fa;
   color: #333;
@@ -11,10 +18,72 @@ body, html {
 /* Global layout wrapper for all pages */
 .page-container {
   width: 100%;
-  min-height: calc(100vh - 60px); /* 60px is your navbar height */
+
+  /*
+    Calculate min-height using CSS variable
+    Automatically adjusts when navbar height changes
+    Fallback: 100vh - 60px if variable not set
+  */
+  min-height: calc(100vh - var(--navbar-height-lg, 60px));
+
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
 }
+
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  body, html {
+    /*
+      On mobile, navbar height changes to --navbar-height-sm
+      This variable is defined in Navbar.css :root
+      Fallback: 120px if variable not set
+    */
+    padding-top: var(--navbar-height-sm, 120px);
+  }
+
+  .page-container {
+    /*
+      Update min-height calculation for mobile navbar
+      Ensures content doesn't get hidden behind navbar
+    */
+    min-height: calc(100vh - var(--navbar-height-sm, 120px));
+  }
+}
+
+/*
+IMPORTANT: How This Works
+═════════════════════════
+
+1. CSS Variables are defined in Navbar.css :root:
+   --navbar-height-lg: 60px   (Desktop)
+   --navbar-height-sm: 120px  (Mobile)
+
+2. This file uses those variables:
+   padding-top: var(--navbar-height-lg, 60px)
+
+3. When you change the variable value:
+   :root { --navbar-height-lg: 80px }
+
+4. All uses of that variable update automatically:
+   padding-top: 80px (automatic!)
+   min-height: calc(100vh - 80px) (automatic!)
+
+5. Fallback values (60px, 120px) ensure the site
+   works even if variables fail to load.
+
+CHANGING NAVBAR HEIGHT
+══════════════════════
+
+Desktop (>600px):
+  1. Edit Navbar.css: --navbar-height-lg: 60px → --navbar-height-lg: 80px
+  2. Done! This file automatically uses the new value
+
+Mobile (≤600px):
+  1. Edit Navbar.css: --navbar-height-sm: 120px → --navbar-height-sm: 150px
+  2. Done! This file automatically uses the new value
+
+No need to edit this file!
+*/
