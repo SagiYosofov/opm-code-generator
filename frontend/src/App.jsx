@@ -1,4 +1,7 @@
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "./context/UserContext";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
@@ -36,6 +39,18 @@ const AppRoutes = () => {
 export default function App() {
   return (
     <BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Navbar />
       <AppRoutes />
     </BrowserRouter>
