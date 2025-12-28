@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { signupUser } from "../api/auth";
+import { toast } from "react-toastify";
 import "../styles/Auth.css";
-
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -87,44 +87,43 @@ const SignupPage = () => {
     setErrors({ ...errors, [name]: validateField(name, value) });
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      const newErrors = {};
-      Object.keys(formData).forEach((key) => {
-        const error = validateField(key, formData[key]);
-        if (error) newErrors[key] = error;
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) newErrors[key] = error;
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const res_data = await signupUser({
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        password: formData.password,
       });
 
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
+      toast.success(res_data.message || "Account created successfully!");
 
-      try {
-        const res_data = await signupUser({
-          firstname: formData.firstname,
-          lastname: formData.lastname,
-          email: formData.email,
-          password: formData.password,
-        });
+      // Reset fields
+      setFormData({
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+      });
 
-        alert(res_data.message);
-
-        // Reset fields
-        setFormData({
-          firstname: "",
-          lastname: "",
-          email: "",
-          password: "",
-          confirmPassword: ""
-        });
-
-      } catch (err) {
-        alert(err.detail || "Signup failed");
-      }
-    };
-
+    } catch (err) {
+      toast.error(err.detail || "Signup failed");
+    }
+  };
 
   return (
     <div className="page-container">
