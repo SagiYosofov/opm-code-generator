@@ -28,7 +28,7 @@ const AboutPage = () => {
             <p className="person-role">Full Stack Developer</p>
             <p className="person-email">sagi9969@gmail.com</p>
             <p className="person-description">
-              Sagi, 25, from Qiryat Bialik, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
+              Sagi, 26, from Qiryat Bialik, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
             </p>
           </div>
 
