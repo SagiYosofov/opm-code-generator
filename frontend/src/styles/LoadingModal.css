@@ -1,0 +1,231 @@
+/* ============ Loading Modal Overlay ============ */
+.loading-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============ Modal Content ============ */
+.loading-modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 48px 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============ Spinner ============ */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ Text Content ============ */
+.loading-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.loading-message {
+  font-size: 16px;
+  color: #5a6c7d;
+  margin: 0 0 24px 0;
+  min-height: 24px;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ============ Time Estimate Section ============ */
+.time-estimate {
+  background: #f0f7ff;
+  border-left: 4px solid #2196f3;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.estimate-text {
+  font-size: 15px;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+  font-weight: 500;
+}
+
+.estimate-highlight {
+  color: #d32f2f;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.estimate-subtext {
+  font-size: 13px;
+  color: #8b95a5;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ============ Progress Bar Animation ============ */
+.loading-progress {
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-animated {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #2196f3,
+    #1976d2,
+    #2196f3
+  );
+  background-size: 200% 100%;
+  border-radius: 3px;
+  animation: progressAnimation 2s ease-in-out infinite;
+}
+
+@keyframes progressAnimation {
+  0% {
+    width: 0%;
+    background-position: 0% 0%;
+  }
+  50% {
+    width: 90%;
+    background-position: 100% 0%;
+  }
+  100% {
+    width: 100%;
+    background-position: 200% 0%;
+  }
+}
+
+/* ============ Responsive Design ============ */
+@media (max-width: 768px) {
+  .loading-modal-content {
+    padding: 40px 24px;
+    max-width: 90%;
+  }
+
+  .loading-title {
+    font-size: 20px;
+  }
+
+  .loading-message {
+    font-size: 14px;
+  }
+
+  .estimate-text {
+    font-size: 14px;
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border-width: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-modal-content {
+    padding: 32px 20px;
+    width: 95%;
+  }
+
+  .loading-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .loading-message {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .time-estimate {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+
+  .estimate-text {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .estimate-subtext {
+    font-size: 11px;
+  }
+
+  .spinner-container {
+    margin-bottom: 20px;
+  }
+
+  .spinner {
+    width: 45px;
+    height: 45px;
+    border-width: 3px;
+  }
+}

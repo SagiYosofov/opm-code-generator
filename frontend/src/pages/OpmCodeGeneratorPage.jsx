@@ -3,6 +3,7 @@ import { generateCode } from "../api/opm";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/OpmCodeGeneratorPage.css";
+import LoadingModal from "../components/LoadingModal";
 
 const OpmCodeGeneratorPage = () => {
   const { user } = useUser();
@@ -13,7 +14,6 @@ const OpmCodeGeneratorPage = () => {
   const [isDragActive, setIsDragActive] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const fileInputRef = useRef(null);
 
@@ -122,7 +122,6 @@ const OpmCodeGeneratorPage = () => {
   const handleRemoveFile = () => {
     setFile(null);
     setErrors({});
-    setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -147,40 +146,48 @@ const OpmCodeGeneratorPage = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("language", selectedLanguage);
+      formData.append("target_language", selectedLanguage);
+
+      console.log("Sending request to backend with:", {
+        filename: file.name,
+        language: selectedLanguage
+      });
 
       const response_data = await generateCode(formData);
 
-      // Handle successful upload
-      alert("Code generated successfully!");
+      console.log("Full Response from Backend:", response_data);
 
-      // If the backend returns a download URL or file data, handle it
-      if (response_data.download_url) {
-        // Trigger file download
-        const link = document.createElement("a");
-        link.href = response_data.download_url;
-        link.download = `opm_generated_${selectedLanguage}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      if (response_data.status === "valid") {
+        console.log("Success! Generated Code Length:", response_data.code?.length);
+
+        // Navigate to success page with state
+        navigate("/opm_success", {
+          state: {
+            explanation: response_data.explanation,
+            code: response_data.code,
+            filename: response_data.filename,
+            language: selectedLanguage,
+            diagramFile: file
+          }
+        });
+      } else {
+        // Diagram is invalid - show explanation on this page
+        console.warn("AI rejected the diagram:", response_data.explanation);
+        setErrors({ diagram: response_data.explanation || "Diagram is invalid." });
       }
-
-      // Reset form
-      handleRemoveFile();
-      setSelectedLanguage("python");
-
     } catch (err) {
+      console.error("Critical Generate Code Error:", err);
       const errorMessage = err.detail || err.message || "Failed to generate code";
       setErrors({ submit: errorMessage });
-      console.error("Generate Code error:", err);
     } finally {
       setIsLoading(false);
-      setUploadProgress(0);
     }
   };
 
   return (
     <div className="page-container">
+      <LoadingModal isOpen={isLoading} />
+
       <div className="opm-upload-container">
         <div className="welcome-section">
           <h1 className="page-title">OPMCodeGenerator</h1>
@@ -286,14 +293,6 @@ const OpmCodeGeneratorPage = () => {
                       ✕
                     </button>
                   </div>
-                  {uploadProgress > 0 && uploadProgress < 100 && (
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${uploadProgress}%` }}
-                      ></div>
-                    </div>
-                  )}
                 </>
               )}
             </div>
@@ -332,6 +331,14 @@ const OpmCodeGeneratorPage = () => {
             {isLoading ? "Generating Code..." : "Generate Code"}
           </button>
 
+          {/* Diagram/AI Explanation Error - shown only when diagram is invalid */}
+          {errors.diagram && (
+            <div className="error-alert">
+              <p className="error-alert-title">Diagram Analysis Failed</p>
+              <p className="error-alert-message">{errors.diagram}</p>
+            </div>
+          )}
+
           {/* Submit Error Message */}
           {errors.submit && (
             <div className="error-alert">
@@ -344,7 +351,7 @@ const OpmCodeGeneratorPage = () => {
         <div className="requirements-section">
           <h3 className="requirements-title">Requirements:</h3>
           <ul className="requirements-list">
-            <li>Supported image formats: JPG, JPEG, PNG, GIF</li>
+            <li>Supported image formats: JPG, JPEG, PNG</li>
             <li>Maximum file size: 5MB</li>
           </ul>
         </div>
@@ -354,7 +361,7 @@ const OpmCodeGeneratorPage = () => {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
         onChange={handleFileSelect}
         style={{ display: "none" }}
       />

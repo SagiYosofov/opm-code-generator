@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { loginUser } from "../api/auth";
 import { useUser } from "../context/UserContext";
+import { toast } from "react-toastify";
 import "../styles/Auth.css";
-
 
 const LoginPage = () => {
   const { login } = useUser(); // get login function from context
@@ -66,11 +66,11 @@ const LoginPage = () => {
 
       login(res_data.user); // save logged-in user to context
 
-      alert(res_data.message);
+      toast.success(res_data.message || "Login successful!");
       setFormData({ email: "", password: "" });
 
     } catch (err) {
-      alert(err.detail || "Login failed");
+      toast.error(err.detail || "Login failed");
     }
   };
 

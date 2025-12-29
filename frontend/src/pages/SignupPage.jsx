@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { signupUser } from "../api/auth";
+import { toast } from "react-toastify";
 import "../styles/Auth.css";
-
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -41,8 +41,6 @@ const SignupPage = () => {
       case "password":
         if (!value) return "Password is required";
         if (value.length < 6) return "Password must be at least 6 characters";
-        if (formData.confirmPassword && value !== formData.confirmPassword)
-          return "Passwords do not match";
         break;
       case "confirmPassword":
         if (!value) return "Confirm your password";
@@ -60,24 +58,27 @@ const SignupPage = () => {
 
     if (name === "password") {
       setPasswordStrength(evaluatePasswordStrength(value));
-    }
 
-    if (touched[name]) {
-      setErrors({ ...errors, [name]: validateField(name, value) });
-
-      // Also validate password/confirmPassword relationship
-      if (name === "password" && touched.confirmPassword) {
+      // If confirmPassword is touched and password changes, revalidate confirmPassword
+      if (touched.confirmPassword) {
         setErrors((prev) => ({
           ...prev,
           confirmPassword: validateField("confirmPassword", formData.confirmPassword)
         }));
       }
-      if (name === "confirmPassword" && touched.password) {
-        setErrors((prev) => ({
-          ...prev,
-          password: validateField("password", formData.password)
-        }));
-      }
+    }
+
+    // When confirmPassword changes, revalidate it
+    if (name === "confirmPassword" && touched.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validateField("confirmPassword", value)
+      }));
+    }
+
+    // Validate other fields normally
+    if (touched[name] && name !== "password" && name !== "confirmPassword") {
+      setErrors({ ...errors, [name]: validateField(name, value) });
     }
   };
 
@@ -87,44 +88,43 @@ const SignupPage = () => {
     setErrors({ ...errors, [name]: validateField(name, value) });
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      const newErrors = {};
-      Object.keys(formData).forEach((key) => {
-        const error = validateField(key, formData[key]);
-        if (error) newErrors[key] = error;
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) newErrors[key] = error;
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const res_data = await signupUser({
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        password: formData.password,
       });
 
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
+      toast.success(res_data.message || "Account created successfully!");
 
-      try {
-        const res_data = await signupUser({
-          firstname: formData.firstname,
-          lastname: formData.lastname,
-          email: formData.email,
-          password: formData.password,
-        });
+      // Reset fields
+      setFormData({
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+      });
 
-        alert(res_data.message);
-
-        // Reset fields
-        setFormData({
-          firstname: "",
-          lastname: "",
-          email: "",
-          password: "",
-          confirmPassword: ""
-        });
-
-      } catch (err) {
-        alert(err.detail || "Signup failed");
-      }
-    };
-
+    } catch (err) {
+      toast.error(err.detail || "Signup failed");
+    }
+  };
 
   return (
     <div className="page-container">
