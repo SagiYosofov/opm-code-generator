@@ -18,9 +18,9 @@ const OpmCodeGeneratorPage = () => {
   const fileInputRef = useRef(null);
 
   // Validation constants
-  const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/jpg"];
-  const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png"];
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+  const ALLOWED_FORMATS = ["application/pdf"];
+  const ALLOWED_EXTENSIONS = [".pdf"];
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
   const LANGUAGE_OPTIONS = [
     { value: "python", label: "Python" },
     { value: "java", label: "Java" },
@@ -35,14 +35,14 @@ const OpmCodeGeneratorPage = () => {
     if (!ALLOWED_FORMATS.includes(fileToValidate.type)) {
       const ext = fileToValidate.name.substring(fileToValidate.name.lastIndexOf(".")).toLowerCase();
       if (!ALLOWED_EXTENSIONS.includes(ext)) {
-        newErrors.file = "Invalid file format. Supported formats: JPG, JPEG, PNG";
+        newErrors.file = "Invalid file format. Only PDF files are supported.";
         return newErrors;
       }
     }
 
     // Check file size
     if (fileToValidate.size > MAX_FILE_SIZE) {
-      newErrors.file = `File size exceeds 5 MB. Your file is ${(fileToValidate.size / (1024 * 1024)).toFixed(2)} MB`;
+      newErrors.file = `File size exceeds 10 MB. Your file is ${(fileToValidate.size / (1024 * 1024)).toFixed(2)} MB`;
       return newErrors;
     }
 
@@ -131,7 +131,7 @@ const OpmCodeGeneratorPage = () => {
     e.preventDefault();
 
     if (!file) {
-      setErrors({ file: "Please upload an OPM diagram" });
+      setErrors({ file: "Please upload an OPM diagram PDF" });
       return;
     }
 
@@ -222,23 +222,31 @@ const OpmCodeGeneratorPage = () => {
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
+                      {/* Document background */}
                       <path
-                        d="M32 12V44M32 12L22 22M32 12L42 22"
-                        stroke="#999"
+                        d="M16 4H36L48 16V60C48 61.1046 47.1046 62 46 62H16C14.8954 62 14 61.1046 14 60V6C14 4.89543 14.8954 4 16 4Z"
+                        fill="#F0F7FF"
+                        stroke="#2196F3"
                         strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
                       />
-                      <path
-                        d="M12 48H52C54.2091 48 56 49.7909 56 52V54C56 56.2091 54.2091 58 52 58H12C9.79086 58 8 56.2091 8 54V52C8 49.7909 9.79086 48 12 48Z"
-                        stroke="#999"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
+                      {/* Document fold */}
+                      <path d="M36 4V16H48" stroke="#2196F3" strokeWidth="2" />
+                      {/* PDF text */}
+                      <text
+                        x="32"
+                        y="36"
+                        fontSize="14"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fill="#E53E3E"
+                        fontFamily="Arial, sans-serif"
+                      >
+                        PDF
+                      </text>
                     </svg>
                   </div>
-                  <p className="drag-text">Drag and drop your OPM diagram here</p>
+                  <p className="drag-text">Drag and drop your OPM diagram PDF here</p>
                   <p className="or-text">or <button
                     type="button"
                     className="browse-button"
@@ -260,21 +268,28 @@ const OpmCodeGeneratorPage = () => {
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                         >
+                          {/* Document background */}
                           <path
                             d="M12 2H28L36 10V44C36 45.1046 35.1046 46 34 46H12C10.8954 46 10 45.1046 10 44V4C10 2.89543 10.8954 2 12 2Z"
                             fill="#E8F4F8"
                             stroke="#2196F3"
                             strokeWidth="2"
                           />
+                          {/* Document fold */}
                           <path d="M28 2V10H36" stroke="#2196F3" strokeWidth="2" />
-                          <image
-                            href={URL.createObjectURL(file)}
-                            x="12"
-                            y="14"
-                            width="24"
-                            height="24"
-                            preserveAspectRatio="xMidYMid slice"
-                          />
+                          {/* PDF text */}
+                          <text
+                            x="24"
+                            y="26"
+                            fontSize="11"
+                            fontWeight="bold"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fill="#E53E3E"
+                            fontFamily="Arial, sans-serif"
+                          >
+                            PDF
+                          </text>
                         </svg>
                       </div>
                       <div className="file-text">
@@ -351,8 +366,8 @@ const OpmCodeGeneratorPage = () => {
         <div className="requirements-section">
           <h3 className="requirements-title">Requirements:</h3>
           <ul className="requirements-list">
-            <li>Supported image formats: JPG, JPEG, PNG</li>
-            <li>Maximum file size: 5MB</li>
+            <li>Supported format: PDF</li>
+            <li>Maximum file size: 10MB</li>
           </ul>
         </div>
       </div>
@@ -361,7 +376,7 @@ const OpmCodeGeneratorPage = () => {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+        accept=".pdf,application/pdf"
         onChange={handleFileSelect}
         style={{ display: "none" }}
       />
