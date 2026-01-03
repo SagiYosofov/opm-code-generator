@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from definitions import opm_lecture_pdf_path
-
-from ai.prompts import OPM_TEACHER_PROMPT
+from definitions import opm_manual_pdf_path, opm_lecture_pdf_path
+from ai.prompts import OPM_SYSTEM_PROMPT
 
 load_dotenv()
 
@@ -36,7 +35,7 @@ class GeminiOPMAgent:
         )
 
         # The system prompt
-        self.opm_teacher_prompt = OPM_TEACHER_PROMPT
+        self.opm_system_prompt = OPM_SYSTEM_PROMPT
 
     def _call_gemini(self, contents: list) -> dict:
         """Internal helper to handle the API call and JSON enforcement."""
@@ -73,7 +72,7 @@ class GeminiOPMAgent:
 
         contents = [
             self.knowledge_base,  # Reusing the persistent PDF
-            self.opm_teacher_prompt,
+            self.opm_system_prompt,
             types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
             f"Target Programming Language: {language}"
         ]
@@ -112,7 +111,7 @@ class GeminiOPMAgent:
 
         contents = [
             self.knowledge_base,  # Reusing the persistent PDF
-            self.opm_teacher_prompt,
+            self.opm_system_prompt,
             types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
             refinement_context
         ]

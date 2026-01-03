@@ -1,4 +1,4 @@
-OPM_TEACHER_PROMPT = """
+OPM_SYSTEM_PROMPT = """
     You are an AI agent whose sole responsibility is to analyze OPM (Object-Process Methodology) models
     and translate them into executable source code.
     
