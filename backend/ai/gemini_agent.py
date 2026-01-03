@@ -24,40 +24,54 @@ class GeminiOPMAgent:
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model_id = "gemini-2.5-flash-lite"  # Efficient and free-tier friendly
 
-        if not os.path.exists(opm_lecture_pdf_path):
-            raise FileNotFoundError(f"Lecture PDF not found at {opm_lecture_pdf_path}")
+        # Validate paths
+        for path in [opm_manual_pdf_path, opm_lecture_pdf_path]:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"Knowledge file not found at {path}")
 
-        # Uploads the PDF once and stores it in self.knowledge_base.
-        # This avoids uploading the same PDF every time we send a diagram.
-        self.knowledge_base = self.client.files.upload(
-            file=opm_lecture_pdf_path,
-            config={'display_name': 'OPM_Core_Rules'}
-        )
+        # Upload BOTH knowledge sources, we store them in a list to pass to every prompt
+        self.knowledge_base = [
+            self.client.files.upload(file=opm_manual_pdf_path, config={'display_name': 'OPM_Manual'}),
+            self.client.files.upload(file=opm_lecture_pdf_path, config={'display_name': 'OPM_Lecture'})
+        ]
 
         # The system prompt
         self.opm_system_prompt = OPM_SYSTEM_PROMPT
 
-    def _call_gemini(self, contents: list) -> dict:
-        """Internal helper to handle the API call and JSON enforcement."""
-        response = self.client.models.generate_content(
-            model=self.model_id,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"  # Forces Gemini to follow our JSON schema
-            )
-        )
-        try:
-            return json.loads(response.text)
-        except json.JSONDecodeError:
-            return {"status": "invalid", "explanation": "Model failed to produce valid JSON."}
+    def _empty_invalid_response(self, msg: str) -> dict:
+        """Returns a fully valid 'invalid' JSON structure."""
+        return {"status": "invalid", "filename": "", "code": "", "explanation": msg}
 
-    def generate_code_from_diagram(self, diagram_bytes: bytes, filename: str, language: str) -> dict:
+    def _call_gemini(self, contents: list) -> dict:
+        """Internal helper: calls Gemini and ensures valid JSON output."""
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_id,
+                contents=contents,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
+            )
+        except Exception as e:
+            return self._empty_invalid_response(f"API call failed: {e}")
+
+        try:
+            result = json.loads(response.text)
+        except json.JSONDecodeError:
+            return self._empty_invalid_response("Model failed to produce valid JSON.")
+
+        # Validate all required keys
+        required_keys = {"status", "filename", "code", "explanation"}
+        if not required_keys.issubset(result.keys()):
+            return self._empty_invalid_response("Model output missing required fields.")
+
+        return result
+
+    def generate_code_from_diagram(self, pdf_bytes: bytes, filename: str, language: str) -> dict:
         """
-        Main entry point to generate code from a diagram.
+        Main entry point to generate code from OPM PDF diagram.
 
         Args:
-            diagram_bytes: The binary content of the OPM diagram image
-            filename: The original filename of the diagram
+            pdf_bytes: The binary content of the OPM diagram.
+            filename: The original filename of the diagram.
             language: Target programming language (python, java, csharp, cpp)
 
         Returns:
@@ -68,22 +82,20 @@ class GeminiOPMAgent:
                 "filename": "output filename" (only if valid)
             }
         """
-        mime_type, _ = mimetypes.guess_type(filename)
-
         contents = [
-            self.knowledge_base,  # Reusing the persistent PDF
+            *self.knowledge_base,  # Manual + Lecture
             self.opm_system_prompt,
-            types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
+            types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
             f"Target Programming Language: {language}"
         ]
         return self._call_gemini(contents)
 
-    def refine_generated_code(self, diagram_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
+    def refine_generated_code(self, pdf_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
         """
         Refinement Turn: Updates existing code based on user feedback.
 
         Args:
-            diagram_bytes: The binary content of the OPM diagram image
+            pdf_bytes: The binary content of the OPM diagram image
             filename: The original filename of the diagram
             language: Target programming language
             previous_code: The previously generated code skeleton
@@ -97,22 +109,19 @@ class GeminiOPMAgent:
                 "filename": "output filename" (only if valid)
             }
         """
-        mime_type, _ = mimetypes.guess_type(filename)
-
         refinement_context = f"""
-        This is a refinement request.
+        This is a REFINEMENT REQUEST:.
         Target Language: {language}
         Previous Code: {previous_code}
         User Fix Instructions: {fix_instructions}
 
-        Update the OPM-to-code mapping according to these instructions while staying strictly 
-        compliant with the OPM rules provided in the PDF.
+        Please update the generated code strictly according to the OPM rules defined in the uploaded PDFs.
         """
 
         contents = [
-            self.knowledge_base,  # Reusing the persistent PDF
+            *self.knowledge_base,
             self.opm_system_prompt,
-            types.Part.from_bytes(data=diagram_bytes, mime_type=mime_type or "image/png"),
+            types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
             refinement_context
         ]
         return self._call_gemini(contents)
