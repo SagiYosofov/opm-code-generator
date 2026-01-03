@@ -38,9 +38,11 @@ class GeminiOPMAgent:
         # The system prompt
         self.opm_system_prompt = OPM_SYSTEM_PROMPT
 
+
     def _empty_invalid_response(self, msg: str) -> dict:
         """Returns a fully valid 'invalid' JSON structure."""
         return {"status": "invalid", "filename": "", "code": "", "explanation": msg}
+
 
     def _call_gemini(self, contents: list) -> dict:
         """Internal helper: calls Gemini and ensures valid JSON output."""
@@ -64,6 +66,7 @@ class GeminiOPMAgent:
             return self._empty_invalid_response("Model output missing required fields.")
 
         return result
+
 
     def generate_code_from_diagram(self, pdf_bytes: bytes, filename: str, language: str) -> dict:
         """
@@ -89,6 +92,7 @@ class GeminiOPMAgent:
             f"Target Programming Language: {language}"
         ]
         return self._call_gemini(contents)
+
 
     def refine_generated_code(self, pdf_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
         """
@@ -117,7 +121,6 @@ class GeminiOPMAgent:
 
         Please update the generated code strictly according to the OPM rules defined in the uploaded PDFs.
         """
-
         contents = [
             *self.knowledge_base,
             self.opm_system_prompt,

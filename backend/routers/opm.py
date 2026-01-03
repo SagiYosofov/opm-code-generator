@@ -75,14 +75,6 @@ async def generate_code(
 
     return JSONResponse(content=result_json)
 
-    # generate opm code from the image and the selected language
-
-    # save the diagram and the generated code for this specific user in db.
-
-    # return a file that contains the code / send the json and in the frontend we will create the file.
-
-    # if the language is python the extension of the file should be .py and so on
-
 
 @router.post("/refine-code")
 async def refine_code(
