@@ -9,14 +9,25 @@ router = APIRouter(
 )
 
 
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".pdf"}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 ALLOWED_LANGUAGES = ["python", "java", "csharp", "cpp"]
 
 
-def validate_extension(filename: str):
+def validate_file(filename: str, size: int):
+    """Utility to validate both extension and file size."""
     ext = os.path.splitext(filename)[1].lower()
-    return ext in ALLOWED_EXTENSIONS
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file format. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
+        )
+
+    if size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"File exceeds {(MAX_FILE_SIZE / 1024 / 1024)}MB limit."
+        )
 
 
 # Initialize Gemini agent once at startup
@@ -29,7 +40,7 @@ async def generate_code(
     target_language: str = Form(...)
 ):
     """
-    Receives an image file of an OPM diagram + target language.
+    Receives an OPM model (PDF or image) + target language.
     Generates code using Gemini and returns JSON.
 
      Response:
@@ -44,26 +55,15 @@ async def generate_code(
     if target_language not in ALLOWED_LANGUAGES:
         raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
 
-    # -------- VALIDATE FILE FORMAT --------
-    if not validate_extension(file.filename):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid file format. Allowed: JPG, JPEG, PNG"
-        )
-
-    # -------- VALIDATE FILE SIZE --------
+    # -------- VALIDATE FILE --------
     contents = await file.read()
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=400,
-            detail=f"File exceeds 5MB. Your file is {(len(contents)/1024/1024):.2f}MB."
-        )
+    validate_file(file.filename, len(contents))
 
     # -------- GENERATE CODE VIA GEMINI --------
     try:
         # CALL GEMINI
         result_json = ai_agent.generate_code_from_diagram(
-            diagram_bytes=contents,
+            pdf_bytes=contents,
             filename=file.filename,
             language=target_language
         )
@@ -99,20 +99,9 @@ async def refine_code(
     if target_language not in ALLOWED_LANGUAGES:
         raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
 
-    # -------- VALIDATE FILE FORMAT --------
-    if not validate_extension(file.filename):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid file format. Allowed: JPG, JPEG, PNG"
-        )
-
-    # -------- VALIDATE FILE SIZE --------
+    # -------- VALIDATE FILE --------
     contents = await file.read()
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=400,
-            detail=f"File exceeds 5MB. Your file is {(len(contents) / 1024 / 1024):.2f}MB."
-        )
+    validate_file(file.filename, len(contents))
 
     # -------- VALIDATE INPUT --------
     if not previous_code.strip():
@@ -124,7 +113,7 @@ async def refine_code(
     # -------- REFINE CODE VIA GEMINI --------
     try:
         result_json = ai_agent.refine_generated_code(
-            diagram_bytes=contents,
+            pdf_bytes=contents,
             filename=file.filename,
             language=target_language,
             previous_code=previous_code,
