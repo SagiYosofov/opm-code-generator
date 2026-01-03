@@ -150,6 +150,7 @@ OPM_TEACHER_PROMPT = """
     
     - If status is "valid":
       - The generated code must compile/run using standard tooling
+      - The generated source code MUST be written strictly and exclusively in the target programming language.
       - The code must be fully self-contained
       - A single entry point is required:
         - Python: if __name__ == "__main__"
