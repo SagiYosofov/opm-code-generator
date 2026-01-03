@@ -1,6 +1,5 @@
 import os
 import json
-import mimetypes
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -19,7 +18,7 @@ class GeminiOPMAgent:
     """
     def __init__(self):
         """
-        Initializes the Gemini client and uploads the OPM knowledge base once.
+        Initializes the Gemini client and uploads the OPM knowledge base files once.
         """
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
         self.model_id = "gemini-2.5-flash-lite"  # Efficient and free-tier friendly
@@ -73,8 +72,8 @@ class GeminiOPMAgent:
         Main entry point to generate code from OPM PDF diagram.
 
         Args:
-            pdf_bytes: The binary content of the OPM diagram.
-            filename: The original filename of the diagram.
+            pdf_bytes: The binary content of the OPM diagram/s.
+            filename: The original filename..
             language: Target programming language (python, java, csharp, cpp)
 
         Returns:
@@ -99,8 +98,8 @@ class GeminiOPMAgent:
         Refinement Turn: Updates existing code based on user feedback.
 
         Args:
-            pdf_bytes: The binary content of the OPM diagram image
-            filename: The original filename of the diagram
+            pdf_bytes: The binary content of the OPM diagram/s
+            filename: The original filename
             language: Target programming language
             previous_code: The previously generated code skeleton
             fix_instructions: User's instructions for refining the code
