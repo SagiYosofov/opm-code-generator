@@ -8,68 +8,78 @@ const AboutPage = () => {
   return (
     <div className="about-page">
       <div className="about-container">
-        {/* Page Title */}
-        <h1 className="page-title">Our Team</h1>
+        {/* Overview Section */}
+        <section className="overview-section">
+          <h1 className="section-title">Overview</h1>
+          <p className="overview-text">
+            The OPM Code Generator bridges the gap between system design and implementation. It automatically transforms Object-Process Methodology (OPM) diagrams-widely used for system modeling-into working code skeletons in multiple programming languages. Designed for software engineers and system architects, this tool eliminates the tedious manual translation process, allowing teams to move from design to development faster and with fewer errors. Developed as a capstone project at Braude College of Engineering, the system demonstrates how AI can streamline modern software development workflows.
+          </p>
+        </section>
 
-        {/* Team Grid */}
-        <div className="team-grid">
+        {/* Our Team Section */}
+        <section className="team-section">
+          <h1 className="section-title">Our Team</h1>
 
-          <div className="person-card">
-            <div className="person-image-container">
-              <div className="person-image">
-                <img
-                  src="/images/sagi.jpg"
-                  alt="Sagi Yosofov"
-                  loading="lazy"
-                />
+          {/* Team Grid */}
+          <div className="team-grid">
+
+            <div className="person-card">
+              <div className="person-image-container">
+                <div className="person-image">
+                  <img
+                    src="/images/sagi.jpg"
+                    alt="Sagi Yosofov"
+                    loading="lazy"
+                  />
+                </div>
               </div>
+              <h3 className="person-name">Sagi Yosofov</h3>
+              <p className="person-role">Full Stack Developer</p>
+              <p className="person-email">sagi9969@gmail.com</p>
+              <p className="person-description">
+                Sagi, 26, from Qiryat Bialik, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
+              </p>
             </div>
-            <h3 className="person-name">Sagi Yosofov</h3>
-            <p className="person-role">Full Stack Developer</p>
-            <p className="person-email">sagi9969@gmail.com</p>
-            <p className="person-description">
-              Sagi, 26, from Qiryat Bialik, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
-            </p>
-          </div>
 
 
-          <div className="person-card supervisor-card">
-            <div className="person-image-container">
-              <div className="person-image">
-                <img
-                  src="/images/natali.jpeg"
-                  alt="Dr. Natali Levi"
-                  loading="lazy"
-                />
+            <div className="person-card supervisor-card">
+              <div className="person-image-container">
+                <div className="person-image">
+                  <img
+                    src="/images/natali.jpeg"
+                    alt="Dr. Natali Levi"
+                    loading="lazy"
+                  />
+                </div>
               </div>
+              <h3 className="person-name">Dr. Natali Levi</h3>
+              <p className="person-role supervisor-role">Project Supervisor</p>
+              <p className="person-email">natalyl@braude.ac.il</p>
+              <p className="person-description">
+                Dr. Natali Levi is a senior lecturer in the Software Engineering Department at Braude College of Engineering. She supervises the OPM Code Generator project and provides professional and academic guidance to the development team.
+              </p>
             </div>
-            <h3 className="person-name">Dr. Natali Levi</h3>
-            <p className="person-role supervisor-role">Project Supervisor</p>
-            <p className="person-email">natalyl@braude.ac.il</p>
-            <p className="person-description">
-              Dr. Natali Levi is a senior lecturer in the Software Engineering Department at Braude College of Engineering. She supervises the OPM Code Generator project and provides professional and academic guidance to the development team.
-            </p>
-          </div>
 
 
-          <div className="person-card">
-            <div className="person-image-container">
-              <div className="person-image">
-                <img
-                  src="/images/liroy.jpg"
-                  alt="Liroy Ben Shimon"
-                  loading="lazy"
-                />
+            <div className="person-card">
+              <div className="person-image-container">
+                <div className="person-image">
+                  <img
+                    src="/images/liroy.jpg"
+                    alt="Liroy Ben Shimon"
+                    loading="lazy"
+                  />
+                </div>
               </div>
+              <h3 className="person-name">Liroy Ben Shimon</h3>
+              <p className="person-role">Full Stack Developer</p>
+              <p className="person-email">bsliroy178@gmail.com</p>
+              <p className="person-description">
+                Liroy, 25, from Kiryat Ata, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
+              </p>
             </div>
-            <h3 className="person-name">Liroy Ben Shimon</h3>
-            <p className="person-role">Full Stack Developer</p>
-            <p className="person-email">bsliroy178@gmail.com</p>
-            <p className="person-description">
-              Liroy, 25, from Kiryat Ata, is a Full Stack Developer and a four-year software engineering student. He works on both front-end and back-end development of the system, leading the integration with Claude AI for translating OPM diagrams to code.
-            </p>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
