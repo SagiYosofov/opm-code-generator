@@ -12,7 +12,7 @@ const AboutPage = () => {
         <section className="overview-section">
           <h1 className="section-title">Overview</h1>
           <p className="overview-text">
-            The OPM Code Generator bridges the gap between system design and implementation. It automatically transforms Object-Process Methodology (OPM) diagrams-widely used for system modeling-into working code skeletons in multiple programming languages. Designed for software engineers and system architects, this tool eliminates the tedious manual translation process, allowing teams to move from design to development faster and with fewer errors. Developed as a capstone project at Braude College of Engineering, the system demonstrates how AI can streamline modern software development workflows.
+            The OPM Code Generator bridges the gap between system design and implementation. It automatically transforms Object-Process Methodology (OPM) diagrams-widely used for system modeling-into working code skeletons in multiple programming languages. Designed for software engineers and system architects, this tool eliminates the tedious manual translation process, allowing teams to move from design to development faster and with fewer errors. The system demonstrates how AI can streamline modern software development workflows.
           </p>
         </section>
 
