@@ -81,7 +81,7 @@
 }
 
 .drag-drop-area:hover {
-  border-color: #4299e1;
+  border-color: #2196f3;
   background: #f0f7ff;
 }
 
@@ -92,8 +92,8 @@
 }
 
 .drag-drop-area.has-file {
-  border-color: #4caf50;
-  background: #f1f8f4;
+  border-color: #2196f3;
+  background: #f0f7ff;
   padding: 30px;
   min-height: auto;
 }
@@ -281,7 +281,7 @@
 }
 
 .language-radio:hover {
-  border-color: #4299e1;
+  border-color: #2196f3;
   background: #f0f7ff;
 }
 
