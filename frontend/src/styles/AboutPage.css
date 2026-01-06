@@ -10,13 +10,37 @@
   margin: 0 auto;
 }
 
-/* Page Title */
-.page-title {
+/* Section Title (for both Overview and Our Team) */
+.section-title {
   font-size: 2.5rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   color: #2c3e50;
+  text-transform: none;
+}
+
+/* Overview Section */
+.overview-section {
+  margin-bottom: 5rem;
+}
+
+.overview-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #374151;
+  text-align: justify;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Team Section */
+.team-section {
+  margin-bottom: 3rem;
 }
 
 /* Team Grid */
@@ -113,8 +137,13 @@
     background-color: #111827;
   }
 
-  .page-title {
+  .section-title {
     color: #f9fafb;
+  }
+
+  .overview-text {
+    background: #1f2937;
+    color: #d1d5db;
   }
 
   .person-card {
@@ -146,13 +175,23 @@
   }
 
   .supervisor-card {
-    order: -1; /* Put supervisor first on mobile */
+    order: -1;
+  }
+
+  .overview-text {
+    text-align: left;
   }
 }
 
 @media (max-width: 768px) {
-  .page-title {
+  .section-title {
     font-size: 2rem;
+  }
+
+  .overview-text {
+    font-size: 1rem;
+    padding: 1.5rem;
+    text-align: left;
   }
 
   .person-card {
