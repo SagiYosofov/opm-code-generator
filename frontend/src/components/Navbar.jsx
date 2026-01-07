@@ -1,25 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom"; // <-- use NavLink
 import { useUser } from "../context/UserContext";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
   const { user, logout } = useUser();
 
+  // Function to apply active class
+  const navLinkClass = ({ isActive }) => (isActive ? "active" : "");
+
   return (
     <nav className="navbar">
       <div className="left">
         {!user ? (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/about">About</Link>
-            <Link to="/signup">Signup</Link>
+            <NavLink to="/login" className={navLinkClass}>Login</NavLink>
+            <NavLink to="/about" className={navLinkClass}>About</NavLink>
+            <NavLink to="/signup" className={navLinkClass}>Signup</NavLink>
           </>
         ) : (
           <>
-            <Link to="/opm_code_generator">OpmCodeGenerator</Link>
-            <Link to="/about">About</Link>
-            <Link to="/projects">UserProjects</Link>
+            <NavLink to="/opm_code_generator" className={navLinkClass}>OpmCodeGenerator</NavLink>
+            <NavLink to="/about" className={navLinkClass}>About</NavLink>
+            <NavLink to="/projects" className={navLinkClass}>UserProjects</NavLink>
           </>
         )}
       </div>

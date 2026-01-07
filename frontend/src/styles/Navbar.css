@@ -85,19 +85,6 @@
   background: #c6282e !important;
 }
 
-/* === Signup Link Special Style === */
-.navbar a[href="/signup"] {
-  background: #007bff;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: 600;
-}
-
-.navbar a[href="/signup"]:hover {
-  background: #0069d9;
-}
-
 /* === Responsive for Mobile === */
 @media (max-width: 600px) {
   .navbar {
@@ -118,4 +105,11 @@
   .navbar button {
     font-size: 14px;
   }
+}
+
+/* Highlight current page */
+.navbar a.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 600;
 }
