@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import "../styles/Navbar.css";
 
@@ -8,30 +8,31 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="left">
-        {!user ? (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/about">About</Link>
-            <Link to="/signup">Signup</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/opm_code_generator">OpmCodeGenerator</Link>
-            <Link to="/about">About</Link>
-            <Link to="/projects">UserProjects</Link>
-          </>
-        )}
-      </div>
+      <div className="nav-container">
+        <div className="left">
+          {!user ? (
+            <>
+              <NavLink to="/login" className="nav-tile">Login</NavLink>
+              <NavLink to="/about" className="nav-tile">About</NavLink>
+              <NavLink to="/signup" className="nav-tile">Signup</NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink to="/opm_code_generator" className="nav-tile">OpmCodeGenerator</NavLink>
+              <NavLink to="/about" className="nav-tile">About</NavLink>
+              <NavLink to="/projects" className="nav-tile">UserProjects</NavLink>
+            </>
+          )}
+        </div>
 
-      <div className="right">
-        <button>Light</button>
-
-        {user && (
-          <button onClick={logout} className="logout-btn">
-            Logout
-          </button>
-        )}
+        <div className="right">
+          <button className="theme-btn">Light</button>
+          {user && (
+            <button onClick={logout} className="nav-tile logout-btn">
+              Logout
+            </button>
+          )}
+        </div>
       </div>
     </nav>
   );

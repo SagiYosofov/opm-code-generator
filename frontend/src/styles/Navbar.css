@@ -1,121 +1,92 @@
-/* Root CSS Variables */
 :root {
-  /* Navbar Heights per Breakpoint */
-  /* Update these if navbar structure changes */
-  --navbar-height-lg: 60px;    /* Desktop (>600px) */
-  --navbar-height-sm: 120px;   /* Mobile (≤600px) */
-  
-  /* Fallback for unsupported browsers */
+  --nav-bg: #1f1f1f;         /* Dark navbar background */
+  --nav-hover: #3a3a3a;      /* Lighter grey for hover */
+  --nav-active: #333333;     /* Background for the active page */
+  --nav-accent: #007bff;     /* The blue "hint" color for the active page */
+  --nav-border: rgba(255, 255, 255, 0.1);
   --navbar-height: 60px;
 }
 
-/* Main Navbar */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  z-index: 1000;
-
   width: 100%;
-  height: var(--navbar-height-lg, 60px);  /* Use large viewport height */
-  background: #1f1f1f;                    /* dark navbar */
-  color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 20px;
-  box-sizing: border-box;
-
+  height: var(--navbar-height);
+  background-color: var(--nav-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
 }
 
-/* === Left & Right Sections === */
-.navbar .left,
-.navbar .right {
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.left, .right {
+  display: flex;
+  height: 100%;
+}
+
+/* The "Tile" Style */
+.nav-tile {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-/* === Links === */
-.navbar a {
+  justify-content: center;
+  padding: 0 20px;
   color: #e4e4e4;
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
-
-  padding: 6px 8px;
-  border-radius: 6px;
-
+  height: 100%;
+  border-right: 1px solid var(--nav-border);
   transition: 0.2s ease;
-}
-
-.navbar a:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-}
-
-/* === Theme Button === */
-.navbar .right button {
-  background: #3a3a3a;
-  border: none;
-  color: white;
-
-  font-size: 14px;
-  padding: 6px 12px;
-
-  border-radius: 6px;
   cursor: pointer;
-  transition: 0.2s ease;
+  background: transparent;
 }
 
-.navbar .right button:hover {
-  background: #555;
+.left .nav-tile:first-child {
+  border-left: 1px solid var(--nav-border);
 }
 
-/* === Logout Button (highlighted) === */
-.logout-btn {
-  background: #e63946 !important;
-}
-
-.logout-btn:hover {
-  background: #c6282e !important;
-}
-
-/* === Signup Link Special Style === */
-.navbar a[href="/signup"] {
-  background: #007bff;
+/* Hover State */
+.nav-tile:hover {
+  background-color: var(--nav-hover);
   color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
+}
+
+/* ACTIVE Page Hint */
+.nav-tile.active {
+  background-color: var(--nav-active);
+  color: white;
+  /* This adds a glowing blue line at the bottom to show where you are */
+  box-shadow: inset 0 -3px 0px var(--nav-accent);
+}
+
+/* Theme Button */
+.theme-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  border-left: 1px solid var(--nav-border);
+  padding: 0 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.theme-btn:hover {
+  background-color: var(--nav-hover);
+}
+
+/* Logout Button */
+.logout-btn {
+  background-color: #e63946;
+  border: none;
   font-weight: 600;
 }
 
-.navbar a[href="/signup"]:hover {
-  background: #0069d9;
-}
-
-/* === Responsive for Mobile === */
-@media (max-width: 600px) {
-  .navbar {
-    height: var(--navbar-height-sm, 120px);  /* Use small viewport height */
-    flex-direction: column;
-    padding: 10px 0;
-    gap: 10px;
-  }
-
-  .navbar .left,
-  .navbar .right {
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .navbar a,
-  .navbar button {
-    font-size: 14px;
-  }
+.logout-btn:hover {
+  background-color: #c6282e;
 }
