@@ -90,11 +90,3 @@
 .logout-btn:hover {
   background-color: #c6282e;
 }
-
-/* Responsive */
-@media (max-width: 600px) {
-  .nav-tile {
-    padding: 0 10px;
-    font-size: 14px;
-  }
-}

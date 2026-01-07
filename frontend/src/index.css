@@ -4,11 +4,10 @@ body, html {
   padding: 0;
 
   /*
-    CSS Variable: --navbar-height-lg
-    Fallback: 60px (if variable not set)
-    Updates when @media breakpoint changes
+    Use the navbar height variable from navbar.css
+    Fallback: 60px if variable not set
   */
-  padding-top: var(--navbar-height-lg, 60px);
+  padding-top: var(--navbar-height, 60px);
 
   font-family: Arial, sans-serif;
   background: #f5f6fa;
@@ -20,35 +19,15 @@ body, html {
   width: 100%;
 
   /*
-    Calculate min-height using CSS variable
+    Calculate min-height using navbar height variable
     Automatically adjusts when navbar height changes
     Fallback: 100vh - 60px if variable not set
   */
-  min-height: calc(100vh - var(--navbar-height-lg, 60px));
+  min-height: calc(100vh - var(--navbar-height, 60px));
 
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
-}
-
-/* Mobile adjustment */
-@media (max-width: 600px) {
-  body, html {
-    /*
-      On mobile, navbar height changes to --navbar-height-sm
-      This variable is defined in Navbar.css :root
-      Fallback: 120px if variable not set
-    */
-    padding-top: var(--navbar-height-sm, 120px);
-  }
-
-  .page-container {
-    /*
-      Update min-height calculation for mobile navbar
-      Ensures content doesn't get hidden behind navbar
-    */
-    min-height: calc(100vh - var(--navbar-height-sm, 120px));
-  }
 }
