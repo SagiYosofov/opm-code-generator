@@ -131,7 +131,7 @@ const OpmCodeGeneratorPage = () => {
     e.preventDefault();
 
     if (!file) {
-      setErrors({ file: "Please upload an OPM diagram PDF" });
+      setErrors({ file: "Please upload an OPM PDF" });
       return;
     }
 
@@ -201,7 +201,7 @@ const OpmCodeGeneratorPage = () => {
         <form onSubmit={handleGenerateCode} className="upload-form">
           {/* Upload Section */}
           <div className="upload-section">
-            <h2 className="section-title">Upload OPM Diagram</h2>
+            <h2 className="section-title">Upload OPM PDF</h2>
 
             <div
               className={`drag-drop-area ${isDragActive ? "active" : ""} ${
@@ -246,7 +246,7 @@ const OpmCodeGeneratorPage = () => {
                       </text>
                     </svg>
                   </div>
-                  <p className="drag-text">Drag and drop your OPM diagram PDF here</p>
+                  <p className="drag-text">Drag and drop your OPM PDF here</p>
                   <p className="or-text">or <button
                     type="button"
                     className="browse-button"
