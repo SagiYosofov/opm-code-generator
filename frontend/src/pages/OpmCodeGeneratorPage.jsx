@@ -168,7 +168,8 @@ const OpmCodeGeneratorPage = () => {
             code: response_data.code,
             filename: response_data.filename,
             language: selectedLanguage,
-            diagramFile: file
+            diagramFile: file,
+            generationId: response_data.generation_id
           }
         });
       } else {
