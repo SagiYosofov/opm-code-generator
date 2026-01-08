@@ -2,6 +2,11 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 import os
 from fastapi.responses import JSONResponse
 from ai.gemini_agent import GeminiOPMAgent
+from db.database import opm_generations_collection
+import uuid
+from bson import Binary
+from datetime import datetime, timezone
+
 
 router = APIRouter(
     prefix="/opm",
@@ -9,13 +14,24 @@ router = APIRouter(
 )
 
 
+# CONSTANTS
 ALLOWED_EXTENSIONS = {".pdf"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 ALLOWED_LANGUAGES = ["python", "java", "csharp", "cpp"]
 
 
+# HELPER FUNCTIONS
 def validate_file(filename: str, size: int):
-    """Utility to validate both extension and file size."""
+    """
+    Validates uploaded file.
+
+    Checks:
+        - File extension (must be in ALLOWED_EXTENSIONS)
+        - File size (must not exceed MAX_FILE_SIZE)
+
+    Raises:
+        HTTPException: If file is invalid
+    """
     ext = os.path.splitext(filename)[1].lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
@@ -37,32 +53,37 @@ ai_agent = GeminiOPMAgent()
 @router.post("/generate-code")
 async def generate_code(
     file: UploadFile = File(...),
-    target_language: str = Form(...)
+    target_language: str = Form(...),
+    user_email: str = Form(...)
 ):
     """
-    Receives an OPM model (PDF or image) + target language.
-    Generates code using Gemini and returns JSON.
+    Generate code from an OPM model (PDF) using Gemini AI.
 
-     Response:
+    :param file: PDF file containing the OPM diagram/s
+    :param target_language: Programming language for generated code (python/java/csharp/cpp)
+    :param user_email: Email of the user submitting the request
+    :return:
+    JSON response with:
     {
         "status": "valid" | "invalid",
-        "explanation": "human-readable explanation",
-        "code": "generated code" (only if status is valid),
-        "filename": "output_filename.ext" (only if status is valid)
+        "explanation": human-readable explanation,
+        "code": generated code (only if status is valid),
+        "filename": "output_filename.ext" (only if status is valid),
+        "generation_id": unique ID of this generation (only if status is valid)
     }
     """
     # -------- VALIDATE LANGUAGE --------
     if target_language not in ALLOWED_LANGUAGES:
         raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
 
-    # -------- VALIDATE FILE --------
+    # -------- READ AND VALIDATE FILE --------
     contents = await file.read()
     validate_file(file.filename, len(contents))
 
-    # -------- GENERATE CODE VIA GEMINI --------
+    # -------- GENERATE CODE VIA AI --------
     try:
         # CALL GEMINI
-        result_json = ai_agent.generate_code_from_diagram(
+        ai_result: dict = ai_agent.generate_code_from_diagram(
             pdf_bytes=contents,
             filename=file.filename,
             language=target_language
@@ -73,33 +94,65 @@ async def generate_code(
             detail=f"Failed to generate code: {str(e)}"
         )
 
-    return JSONResponse(content=result_json)
+    # -------- SAVE TO DATABASE IF VALID --------
+    if ai_result.get("status") == "valid":
+        generation_id = str(uuid.uuid4())
+        current_time = datetime.now(timezone.utc)
+
+        document = {
+            "generation_id": generation_id,
+            "user_email": user_email,
+            "pdf_filename": file.filename,
+            "pdf_file": Binary(contents), # convert bytes to MongoDB Binary
+            "target_language": target_language,
+            "ai_generated_code": ai_result.get("code"),
+            "ai_explanation": ai_result.get("explanation"),
+            "created_at": current_time,
+            "updated_at": current_time
+        }
+
+        opm_generations_collection.insert_one(document)
+
+        # Return generation_id to frontend
+        ai_result["generation_id"] = generation_id
+
+    return JSONResponse(content=ai_result)
 
 
 @router.post("/refine-code")
 async def refine_code(
+        generation_id: str = Form(...),
         file: UploadFile = File(...),
         target_language: str = Form(...),
         previous_code: str = Form(...),
         fix_instructions: str = Form(...)
 ):
     """
-    Receives an OPM diagram, previously generated code, and fix instructions.
-    Refines the code using Gemini and returns JSON.
+    Refine previously generated code using a new OPM diagram and fix instructions.
 
-    Response:
+    :param generation_id: Unique ID of the previous generation
+    :param file: PDF file containing the OPM diagram/s
+    :param target_language: Programming language for generated code (python/java/csharp/cpp)
+    :param previous_code: The code generated previously
+    :param fix_instructions: Instructions to improve/fix the previous code
+    :return:
+    JSON response with:
     {
         "status": "valid" | "invalid",
         "explanation": "human-readable explanation",
         "code": "refined code" (only if status is valid),
         "filename": "output_filename.ext" (only if status is valid)
     }
+
+    Notes:
+    - Updates the existing document in MongoDB instead of creating a new one.
+    - Returns 404 if generation_id is not found.
     """
     # -------- VALIDATE LANGUAGE --------
     if target_language not in ALLOWED_LANGUAGES:
         raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
 
-    # -------- VALIDATE FILE --------
+    # -------- READ AND VALIDATE FILE --------
     contents = await file.read()
     validate_file(file.filename, len(contents))
 
@@ -110,9 +163,9 @@ async def refine_code(
     if not fix_instructions.strip():
         raise HTTPException(status_code=400, detail="Fix instructions are required")
 
-    # -------- REFINE CODE VIA GEMINI --------
+    # -------- REFINE CODE VIA AI --------
     try:
-        result_json = ai_agent.refine_generated_code(
+        ai_result: dict = ai_agent.refine_generated_code(
             pdf_bytes=contents,
             filename=file.filename,
             language=target_language,
@@ -125,4 +178,23 @@ async def refine_code(
             detail=f"Failed to refine code: {str(e)}"
         )
 
-    return JSONResponse(content=result_json)
+    # -------- UPDATE DATABASE IF VALID --------
+    if ai_result.get("status") == "valid":
+        update_result = opm_generations_collection.update_one(
+            {"generation_id": generation_id},
+            {
+                "$set": {
+                    "ai_generated_code": ai_result.get("code"),
+                    "ai_explanation": ai_result.get("explanation"),
+                    "updated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+
+        if update_result.matched_count == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="OPM Generation not found, there is nothing to update in the database"
+            )
+
+    return JSONResponse(content=ai_result)

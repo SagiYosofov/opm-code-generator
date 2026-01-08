@@ -147,6 +147,7 @@ const OpmCodeGeneratorPage = () => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("target_language", selectedLanguage);
+      formData.append("user_email", user.email);
 
       console.log("Sending request to backend with:", {
         filename: file.name,
@@ -167,7 +168,8 @@ const OpmCodeGeneratorPage = () => {
             code: response_data.code,
             filename: response_data.filename,
             language: selectedLanguage,
-            diagramFile: file
+            diagramFile: file,
+            generationId: response_data.generation_id
           }
         });
       } else {

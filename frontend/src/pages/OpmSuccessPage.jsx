@@ -8,8 +8,10 @@ const OpmSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Read state passed via React Router from previous page
   const state = location.state;
 
+  // If state is missing or invalid, show an error message
   if (!state || !state.code || !state.explanation) {
     return (
       <div className="page-container">
@@ -75,6 +77,7 @@ const OpmSuccessPage = () => {
 
     try {
       const formData = new FormData();
+      formData.append("generation_id", state.generationId);
       formData.append("file", state.diagramFile);
       formData.append("target_language", state.language);
       formData.append("previous_code", currentCode);

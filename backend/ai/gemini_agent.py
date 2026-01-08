@@ -55,7 +55,7 @@ class GeminiOPMAgent:
             return self._empty_invalid_response(f"API call failed: {e}")
 
         try:
-            result = json.loads(response.text)
+            result: dict = json.loads(response.text)
         except json.JSONDecodeError:
             return self._empty_invalid_response("Model failed to produce valid JSON.")
 
