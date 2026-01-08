@@ -85,8 +85,7 @@ async def generate_code(
         # CALL GEMINI
         ai_result: dict = ai_agent.generate_code_from_diagram(
             pdf_bytes=contents,
-            filename=file.filename,
-            language=target_language
+            target_language=target_language
         )
     except Exception as e:
         raise HTTPException(
@@ -167,8 +166,7 @@ async def refine_code(
     try:
         ai_result: dict = ai_agent.refine_generated_code(
             pdf_bytes=contents,
-            filename=file.filename,
-            language=target_language,
+            target_language=target_language,
             previous_code=previous_code,
             fix_instructions=fix_instructions
         )
