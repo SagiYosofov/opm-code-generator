@@ -37,7 +37,8 @@ ai_agent = GeminiOPMAgent()
 @router.post("/generate-code")
 async def generate_code(
     file: UploadFile = File(...),
-    target_language: str = Form(...)
+    target_language: str = Form(...),
+    user_email: str = Form(...)
 ):
     """
     Receives an OPM model (PDF or image) + target language.
@@ -62,7 +63,7 @@ async def generate_code(
     # -------- GENERATE CODE VIA GEMINI --------
     try:
         # CALL GEMINI
-        result_json = ai_agent.generate_code_from_diagram(
+        ai_result: dict = ai_agent.generate_code_from_diagram(
             pdf_bytes=contents,
             filename=file.filename,
             language=target_language
@@ -73,7 +74,7 @@ async def generate_code(
             detail=f"Failed to generate code: {str(e)}"
         )
 
-    return JSONResponse(content=result_json)
+    return JSONResponse(content=ai_result)
 
 
 @router.post("/refine-code")
@@ -112,7 +113,7 @@ async def refine_code(
 
     # -------- REFINE CODE VIA GEMINI --------
     try:
-        result_json = ai_agent.refine_generated_code(
+        ai_result: dict = ai_agent.refine_generated_code(
             pdf_bytes=contents,
             filename=file.filename,
             language=target_language,
@@ -125,4 +126,4 @@ async def refine_code(
             detail=f"Failed to refine code: {str(e)}"
         )
 
-    return JSONResponse(content=result_json)
+    return JSONResponse(content=ai_result)
