@@ -5,7 +5,7 @@ from ai.gemini_agent import GeminiOPMAgent
 from db.database import opm_generations_collection
 import uuid
 from bson import Binary
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 router = APIRouter(
@@ -97,6 +97,7 @@ async def generate_code(
     # -------- SAVE TO DATABASE IF VALID --------
     if ai_result.get("status") == "valid":
         generation_id = str(uuid.uuid4())
+        current_time = datetime.now(timezone.utc)
 
         document = {
             "generation_id": generation_id,
@@ -106,8 +107,8 @@ async def generate_code(
             "target_language": target_language,
             "ai_generated_code": ai_result.get("code"),
             "ai_explanation": ai_result.get("explanation"),
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": current_time,
+            "updated_at": current_time
         }
 
         opm_generations_collection.insert_one(document)
@@ -185,7 +186,7 @@ async def refine_code(
                 "$set": {
                     "ai_generated_code": ai_result.get("code"),
                     "ai_explanation": ai_result.get("explanation"),
-                    "updated_at": datetime.utcnow()
+                    "updated_at": datetime.now(timezone.utc)
                 }
             }
         )
