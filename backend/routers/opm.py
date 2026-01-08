@@ -17,7 +17,12 @@ router = APIRouter(
 # CONSTANTS
 ALLOWED_EXTENSIONS = {".pdf"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
-ALLOWED_LANGUAGES = ["python", "java", "csharp", "cpp"]
+language_to_filename: dict = {
+        "python": "main.py",
+        "java": "Main.java",
+        "csharp": "Program.cs",
+        "cpp": "main.cpp"
+    }
 
 
 # HELPER FUNCTIONS
@@ -46,6 +51,11 @@ def validate_file(filename: str, size: int):
         )
 
 
+def validate_language(language: str):
+    if language not in language_to_filename:
+        raise HTTPException(status_code=400, detail=f"Unsupported language: {language}")
+
+
 # Initialize Gemini agent once at startup
 ai_agent = GeminiOPMAgent()
 
@@ -68,13 +78,14 @@ async def generate_code(
         "status": "valid" | "invalid",
         "explanation": human-readable explanation,
         "code": generated code (only if status is valid),
-        "filename": "output_filename.ext" (only if status is valid),
+        "filename": "output_filename (according to target_language),
         "generation_id": unique ID of this generation (only if status is valid)
     }
     """
     # -------- VALIDATE LANGUAGE --------
-    if target_language not in ALLOWED_LANGUAGES:
-        raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
+    validate_language(target_language)
+
+    output_filename = language_to_filename[target_language]
 
     # -------- READ AND VALIDATE FILE --------
     contents = await file.read()
@@ -85,14 +96,15 @@ async def generate_code(
         # CALL GEMINI
         ai_result: dict = ai_agent.generate_code_from_diagram(
             pdf_bytes=contents,
-            filename=file.filename,
-            language=target_language
+            target_language=target_language
         )
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Failed to generate code: {str(e)}"
         )
+
+    ai_result["filename"] = output_filename
 
     # -------- SAVE TO DATABASE IF VALID --------
     if ai_result.get("status") == "valid":
@@ -105,6 +117,7 @@ async def generate_code(
             "pdf_filename": file.filename,
             "pdf_file": Binary(contents), # convert bytes to MongoDB Binary
             "target_language": target_language,
+            "output_filename": output_filename,
             "ai_generated_code": ai_result.get("code"),
             "ai_explanation": ai_result.get("explanation"),
             "created_at": current_time,
@@ -140,8 +153,7 @@ async def refine_code(
     {
         "status": "valid" | "invalid",
         "explanation": "human-readable explanation",
-        "code": "refined code" (only if status is valid),
-        "filename": "output_filename.ext" (only if status is valid)
+        "code": "refined code" (only if status is valid)
     }
 
     Notes:
@@ -149,8 +161,7 @@ async def refine_code(
     - Returns 404 if generation_id is not found.
     """
     # -------- VALIDATE LANGUAGE --------
-    if target_language not in ALLOWED_LANGUAGES:
-        raise HTTPException(status_code=400, detail=f"Unsupported language: {target_language}")
+    validate_language(target_language)
 
     # -------- READ AND VALIDATE FILE --------
     contents = await file.read()
@@ -167,8 +178,7 @@ async def refine_code(
     try:
         ai_result: dict = ai_agent.refine_generated_code(
             pdf_bytes=contents,
-            filename=file.filename,
-            language=target_language,
+            target_language=target_language,
             previous_code=previous_code,
             fix_instructions=fix_instructions
         )

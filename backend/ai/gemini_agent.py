@@ -40,7 +40,7 @@ class GeminiOPMAgent:
 
     def _empty_invalid_response(self, msg: str) -> dict:
         """Returns a fully valid 'invalid' JSON structure."""
-        return {"status": "invalid", "filename": "", "code": "", "explanation": msg}
+        return {"status": "invalid", "code": "", "explanation": msg}
 
 
     def _call_gemini(self, contents: list) -> dict:
@@ -60,61 +60,57 @@ class GeminiOPMAgent:
             return self._empty_invalid_response("Model failed to produce valid JSON.")
 
         # Validate all required keys
-        required_keys = {"status", "filename", "code", "explanation"}
+        required_keys = {"status", "code", "explanation"}
         if not required_keys.issubset(result.keys()):
             return self._empty_invalid_response("Model output missing required fields.")
 
         return result
 
 
-    def generate_code_from_diagram(self, pdf_bytes: bytes, filename: str, language: str) -> dict:
+    def generate_code_from_diagram(self, pdf_bytes: bytes, target_language: str) -> dict:
         """
         Main entry point to generate code from OPM PDF diagram.
 
         Args:
             pdf_bytes: The binary content of the OPM diagram/s.
-            filename: The original filename..
-            language: Target programming language (python, java, csharp, cpp)
+            target_language: Target programming language (python, java, csharp, cpp)
 
         Returns:
             {
                 "status": "valid" | "invalid",
                 "explanation": "human-readable explanation",
                 "code": "generated code skeleton" (only if valid),
-                "filename": "output filename" (only if valid)
             }
         """
         contents = [
             *self.knowledge_base,  # Manual + Lecture
             self.opm_system_prompt,
             types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
-            f"Target Programming Language: {language}"
+            f"Target Programming Language: {target_language}"
         ]
         return self._call_gemini(contents)
 
 
-    def refine_generated_code(self, pdf_bytes: bytes, filename: str, language: str, previous_code: str, fix_instructions: str) -> dict:
+    def refine_generated_code(self, pdf_bytes: bytes, target_language: str, previous_code: str, fix_instructions: str) -> dict:
         """
         Refinement Turn: Updates existing code based on user feedback.
 
         Args:
             pdf_bytes: The binary content of the OPM diagram/s
-            filename: The original filename
-            language: Target programming language
+            target_language: Target programming language
             previous_code: The previously generated code skeleton
             fix_instructions: User's instructions for refining the code
 
         Returns:
             {
                 "status": "valid" | "invalid",
-                "explanation": "human-readable explanation",
                 "code": "refined code skeleton" (only if valid),
-                "filename": "output filename" (only if valid)
+                "explanation": "human-readable explanation"
             }
         """
         refinement_context = f"""
         This is a REFINEMENT REQUEST:.
-        Target Language: {language}
+        Target Language: {target_language}
         Previous Code: {previous_code}
         User Fix Instructions: {fix_instructions}
 
