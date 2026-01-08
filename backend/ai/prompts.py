@@ -125,16 +125,9 @@ OPM_SYSTEM_PROMPT = """
     
     {
       "status": "valid" | "invalid",
-      "filename": "<main executable filename with correct extension>",
       "code": "<full executable source code as a single string>",
       "explanation": "<brief technical explanation OR list of validation errors>"
     }
-    
-    Filename conventions:
-    - Python: main.py
-    - Java: Main.java
-    - C#: Program.cs
-    - C++: main.cpp
     
     --------------------------------------------------------------------
     
@@ -142,7 +135,6 @@ OPM_SYSTEM_PROMPT = """
     
     - If status is "invalid":
       - "code" MUST be an empty string
-      - "filename" MUST be an empty string
       - "explanation" MUST clearly describe:
         - Which diagrams are invalid
         - Any cross-diagram contradictions
