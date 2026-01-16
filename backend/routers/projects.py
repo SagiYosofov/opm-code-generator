@@ -8,7 +8,7 @@ router = APIRouter(
     tags=["User Projects"]
 )
 
-@router.get("")
+@router.get("/")
 async def get_user_projects(user_email: str):
     """
     Get all OPM generations for a specific user.
@@ -43,7 +43,7 @@ async def get_project_by_id(generation_id: str):
     """
     project = opm_generations_collection.find_one(
         {"generation_id": generation_id},
-        {"_id": 0, "pdf_file": 0} # Exclude mondo db id and binary data of pdf file
+        {"_id": 0, "pdf_file": 0} # Exclude MongoDB id and binary data of pdf file
     )
 
     if not project:
