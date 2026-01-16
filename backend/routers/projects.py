@@ -25,7 +25,7 @@ async def get_user_projects(user_email: str):
             }
         ).sort("created_at", -1))  # Most recent first
 
-        return JSONResponse(content=projects)
+        return projects
     except Exception as e:
         raise HTTPException(
             status_code=500,
