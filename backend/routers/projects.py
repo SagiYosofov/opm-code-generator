@@ -8,7 +8,7 @@ router = APIRouter(
     tags=["User Projects"]
 )
 
-@router.get("/")
+@router.get("/{user_email}")
 async def get_user_projects(user_email: str):
     """
     Get all OPM generations for a specific user.
