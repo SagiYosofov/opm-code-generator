@@ -52,7 +52,7 @@ async def get_project_by_id(generation_id: str):
             detail="Project not found"
         )
 
-    return JSONResponse(content=project)
+    return project
 
 
 @router.get("/{generation_id}/pdf")
@@ -211,4 +211,4 @@ async def get_project_stats(generation_id: str):
         "has_been_refined": project.get("created_at") != project.get("updated_at")
     }
 
-    return JSONResponse(content=stats)
+    return stats
