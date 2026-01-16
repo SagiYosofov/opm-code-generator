@@ -11,10 +11,10 @@ import "../styles/UserProjectsPage.css";
 
 const UserProjectsPage = () => {
   const { user } = useUser();
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [projects, setProjects] = useState([]); // Array of user projects from the backend.
+  const [loading, setLoading] = useState(true); // True while data is are being fetched from backend.
+  const [selectedProject, setSelectedProject] = useState(null); // Stores the project the user wants to view in modal.
+  const [showModal, setShowModal] = useState(false); // Boolean to toggle the modal display.
 
   // Fetch projects on component mount
   useEffect(() => {
@@ -24,6 +24,7 @@ const UserProjectsPage = () => {
   }, [user]);
 
   const fetchProjects = async () => {
+      // retrieve all projects for the user.
     setLoading(true);
     try {
       const data = await getUserProjects(user.email);
@@ -36,6 +37,7 @@ const UserProjectsPage = () => {
   };
 
   const handleViewProject = (project) => {
+    // Opens a modal with AI explanation and code.
     setSelectedProject(project);
     setShowModal(true);
   };
@@ -76,6 +78,7 @@ const UserProjectsPage = () => {
   };
 
   const formatDate = (dateString) => {
+    // Converts date string into a readable format.
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -87,6 +90,7 @@ const UserProjectsPage = () => {
   };
 
   const getLanguageIcon = (language) => {
+    // Adds a small emoji for code language.
     const icons = {
       python: "🐍",
       java: "☕",
