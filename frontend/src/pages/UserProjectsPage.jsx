@@ -146,7 +146,7 @@ const UserProjectsPage = () => {
       python: "🐍",
       java: "☕",
       csharp: "#️⃣",
-      cpp: "⚡"
+      cpp: "➕➕"
     };
     return icons[language] || "💻";
   };
