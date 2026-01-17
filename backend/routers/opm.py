@@ -132,7 +132,7 @@ async def generate_code(
     return JSONResponse(content=ai_result)
 
 
-@router.post("/refine-code")
+@router.put("/refine-code")
 async def refine_code(
         generation_id: str = Form(...),
         file: UploadFile = File(...),

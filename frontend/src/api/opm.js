@@ -22,7 +22,7 @@ export const generateCode = async (formData) => {
  */
 export const refineCode = async (formData) => {
   try {
-    const res = await api.post(ENDPOINTS.REFINE_CODE, formData);
+    const res = await api.put(ENDPOINTS.REFINE_CODE, formData);
     return res.data;
   } catch (err) {
     throw err.response?.data || { detail: "Failed to refine code" };
