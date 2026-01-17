@@ -1,3 +1,8 @@
+/* ============================================
+   LOADING MODAL
+   LIGHT/DARK MODE SUPPORT
+   ============================================ */
+
 /* ============ Loading Modal Overlay ============ */
 .loading-modal-overlay {
   position: fixed;
@@ -25,14 +30,15 @@
 
 /* ============ Modal Content ============ */
 .loading-modal-content {
-  background: white;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 48px 40px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--card-shadow);
   text-align: center;
   animation: slideUp 0.4s ease-out;
+  transition: all 0.3s ease;
 }
 
 @keyframes slideUp {
@@ -56,10 +62,11 @@
 .spinner {
   width: 60px;
   height: 60px;
-  border: 4px solid #f0f0f0;
-  border-top: 4px solid #2196f3;
+  border: 4px solid var(--bg-tertiary);
+  border-top: 4px solid var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  transition: border-color 0.3s ease;
 }
 
 @keyframes spin {
@@ -75,17 +82,19 @@
 .loading-title {
   font-size: 24px;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0 0 12px 0;
   letter-spacing: -0.5px;
+  transition: color 0.3s ease;
 }
 
 .loading-message {
   font-size: 16px;
-  color: #5a6c7d;
+  color: var(--text-secondary);
   margin: 0 0 24px 0;
   min-height: 24px;
   animation: fadeInOut 2s ease-in-out infinite;
+  transition: color 0.3s ease;
 }
 
 @keyframes fadeInOut {
@@ -99,49 +108,53 @@
 
 /* ============ Time Estimate Section ============ */
 .time-estimate {
-  background: #f0f7ff;
-  border-left: 4px solid #2196f3;
+  background: var(--bg-tertiary);
+  border-left: 4px solid var(--accent-primary);
   padding: 16px 20px;
   border-radius: 8px;
   margin-bottom: 24px;
+  transition: all 0.3s ease;
 }
 
 .estimate-text {
   font-size: 15px;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0 0 6px 0;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .estimate-highlight {
-  color: #d32f2f;
+  color: var(--accent-danger);
   font-weight: 700;
   font-size: 16px;
 }
 
 .estimate-subtext {
   font-size: 13px;
-  color: #8b95a5;
+  color: var(--text-tertiary);
   margin: 0;
   font-style: italic;
+  transition: color 0.3s ease;
 }
 
 /* ============ Progress Bar Animation ============ */
 .loading-progress {
   width: 100%;
   height: 6px;
-  background: #e0e0e0;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 .progress-bar-animated {
   height: 100%;
   background: linear-gradient(
     90deg,
-    #2196f3,
-    #1976d2,
-    #2196f3
+    var(--accent-primary),
+    var(--accent-hover),
+    var(--accent-primary)
   );
   background-size: 200% 100%;
   border-radius: 3px;
