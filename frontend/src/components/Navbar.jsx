@@ -1,10 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import { useTheme } from "../context/ThemeContext";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
   const { user, logout } = useUser();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <nav className="navbar">
@@ -26,7 +28,9 @@ const Navbar = () => {
         </div>
 
         <div className="right">
-          <button className="theme-btn">Light</button>
+          <button className="theme-btn" onClick={toggleTheme}>
+            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
+          </button>
           {user && (
             <button onClick={logout} className="nav-tile logout-btn">
               Logout
