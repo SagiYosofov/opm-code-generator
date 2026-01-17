@@ -115,6 +115,40 @@ OPM_SYSTEM_PROMPT = """
     
     --------------------------------------------------------------------
     
+    Language-specific filename and entry-point rules (MANDATORY):
+
+    These rules are STRICT and NON-NEGOTIABLE.
+    Violation of ANY rule below makes the output INVALID.
+    
+    - Python:
+      - Output file name: main.py
+      - A main entry point MUST exist using:
+            if __name__ == "__main__":
+    
+    - Java:
+      - Output file name: Main.java
+      - The code MUST contain EXACTLY ONE public class named Main
+      - NO other public classes are allowed
+      - The entry point MUST be:
+            public static void main(String[] args)
+    
+    - C#:
+      - Output file name: Program.cs
+      - The code MUST contain a class named Program
+      - The entry point MUST be:
+            static void Main(string[] args)
+    
+    - C++:
+      - Output file name: main.cpp
+      - The entry point MUST be:
+            int main()
+    
+    The system name derived from the OPM model or PDF filename
+    MUST NOT be used as a public class or entry-point identifier
+    unless it exactly matches the required filename-based name.
+    
+    --------------------------------------------------------------------
+    
     Output format (STRICT):
     
     Output MUST be valid JSON.
@@ -144,11 +178,6 @@ OPM_SYSTEM_PROMPT = """
       - The generated code must compile/run using standard tooling
       - The generated source code MUST be written strictly and exclusively in the target programming language.
       - The code must be fully self-contained
-      - A single entry point is required:
-        - Python: if __name__ == "__main__"
-        - Java: public static void main(String[] args)
-        - C#: static void Main(string[] args)
-        - C++: int main()
     
     - Assume no external libraries unless strictly necessary.
     - Be deterministic and consistent across runs.
