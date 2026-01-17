@@ -108,11 +108,20 @@ const UserProjectsPage = () => {
     }
 
     try {
+        // Call the API to delete on the backend
       await deleteProject(generationId, user.email);
+
+      // Update local state immediately without a re-fetch
+      setProjects((prevProjects) =>
+        prevProjects.filter((project) => project.generation_id !== generationId)
+      );
+
       toast.success("Project deleted successfully!");
-      fetchProjects();
+
+      // Close modal if the deleted project was the one being viewed
       if (selectedProject?.generation_id === generationId) {
         setShowModal(false);
+        setSelectedProject(null);
       }
     } catch (error) {
       toast.error(error.detail || "Failed to delete project");
