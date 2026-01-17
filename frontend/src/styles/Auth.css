@@ -3,23 +3,6 @@
    LIGHT/DARK MODE SUPPORT
    ============================================ */
 /* Main Container */
-.auth-container {
-  width: 100%;
-
-  /*
-    CRITICAL: Calculate min-height using same --navbar-height variable
-    Ensures content area fills screen properly
-  */
-  min-height: calc(100vh - var(--navbar-height, 60px));
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-
 /* === Form Box === */
 .form-box {
   background-color: var(--card-bg);
