@@ -91,42 +91,6 @@ async def download_pdf(generation_id: str):
     )
 
 
-@router.get("/{generation_id}/code")
-async def download_code(generation_id: str):
-    """
-    Download the generated code for a specific project.
-
-    :param generation_id: Unique ID of the generation
-    :return: Code file as streaming response
-    """
-    project = opm_generations_collection.find_one(
-        {"generation_id": generation_id},
-        {"ai_generated_code": 1, "output_filename": 1, "target_language": 1}
-    )
-
-    if not project:
-        raise HTTPException(
-            status_code=404,
-            detail="Project not found"
-        )
-
-    if "ai_generated_code" not in project:
-        raise HTTPException(
-            status_code=404,
-            detail="Generated code not found for this project"
-        )
-
-    code_bytes = project["ai_generated_code"].encode('utf-8')
-
-    return StreamingResponse(
-        io.BytesIO(code_bytes),
-        media_type="text/plain",
-        headers={
-            "Content-Disposition": f'attachment; filename="{project["output_filename"]}"'
-        }
-    )
-
-
 @router.delete("/{generation_id}")
 async def delete_project(generation_id: str, user_email: str):
     """

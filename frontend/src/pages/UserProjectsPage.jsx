@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import {
   getUserProjects,
   downloadDiagram,
-  downloadCode,
   deleteProject
 } from "../api/projects";
 import "../styles/UserProjectsPage.css";
@@ -51,14 +50,50 @@ const UserProjectsPage = () => {
     }
   };
 
-  const handleDownloadCode = async (generationId, filename) => {
-    try {
-      await downloadCode(generationId, filename);
-      toast.success("Code downloaded successfully!");
-    } catch (error) {
-      toast.error(error.detail || "Failed to download code");
-    }
-  };
+  const getMimeType = (filename) => {
+      const extension = filename.split('.').pop().toLowerCase();
+
+      const mimeTypes = {
+        'py': 'text/x-python',
+        'java': 'text/x-java',
+        'cs': 'text/x-csharp',
+        'cpp': 'text/x-c++'
+      };
+
+      return mimeTypes[extension] || 'text/plain';
+    };
+
+  const handleDownloadCode = (code, filename) => {
+      try {
+        if (!code) {
+          toast.error("Code content is missing");
+          return;
+        }
+
+        // Determine the correct MIME type
+        const mimeType = getMimeType(filename);
+
+        // Create the blob with the specific MIME type
+        const blob = new Blob([code], { type: `${mimeType};charset=utf-8` });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename || 'generated_code.txt');
+
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        toast.success("Code downloaded successfully!");
+      } catch (error) {
+        console.error("Download error:", error);
+        toast.error("Failed to download code");
+      }
+    };
 
   const handleDeleteProject = async (generationId) => {
     if (!window.confirm("Are you sure you want to delete this project?")) {
@@ -181,7 +216,7 @@ const UserProjectsPage = () => {
                   <button
                     className="action-btn download-btn"
                     onClick={() => handleDownloadCode(
-                      project.generation_id,
+                      project.ai_generated_code,
                       project.output_filename
                     )}
                   >
@@ -235,7 +270,7 @@ const UserProjectsPage = () => {
               <button
                 className="modal-btn download-code-btn"
                 onClick={() => handleDownloadCode(
-                  selectedProject.generation_id,
+                  selectedProject.ai_generated_code,
                   selectedProject.output_filename
                 )}
               >
