@@ -3,7 +3,7 @@ import { useUser } from "../context/UserContext";
 import { toast } from "react-toastify";
 import {
   getUserProjects,
-  downloadDiagram,
+  getPdfById,
   deleteProject
 } from "../api/projects";
 import "../styles/UserProjectsPage.css";
@@ -43,10 +43,14 @@ const UserProjectsPage = () => {
 
   const handleDownloadDiagram = async (generationId, filename) => {
     try {
-      await downloadDiagram(generationId, filename);
-      toast.success("Diagram downloaded successfully!");
+      // getPdfById returns the raw Blob because of responseType: 'blob'
+      const pdfBlob= await getPdfById(generationId);
+
+      triggerFileDownload(pdfBlob, filename)
+
+      toast.success("PDF downloaded successfully!");
     } catch (error) {
-      toast.error(error.detail || "Failed to download diagram");
+      toast.error(error.detail || "Failed to download pdf");
     }
   };
 
@@ -75,24 +79,27 @@ const UserProjectsPage = () => {
 
         // Create the blob with the specific MIME type
         const blob = new Blob([code], { type: `${mimeType};charset=utf-8` });
-        const url = window.URL.createObjectURL(blob);
 
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename || 'generated_code.txt');
-
-        document.body.appendChild(link);
-        link.click();
-
-        // Cleanup
-        link.remove();
-        window.URL.revokeObjectURL(url);
+        triggerFileDownload(blob, filename)
 
         toast.success("Code downloaded successfully!");
       } catch (error) {
         console.error("Download error:", error);
         toast.error("Failed to download code");
       }
+    };
+
+  const triggerFileDownload = (blob, filename) => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
     };
 
   const handleDeleteProject = async (generationId) => {

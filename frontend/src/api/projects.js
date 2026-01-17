@@ -36,27 +36,15 @@ export const getProjectById = async (generationId) => {
 /**
  * Download the PDF diagram for a specific project
  * @param {string} generationId - The unique generation ID
- * @param {string} filename - Original PDF filename
  */
-export const downloadDiagram = async (generationId, filename) => {
+export const getPdfById = async (generationId) => {
   try {
     const res = await api.get(ENDPOINTS.DOWNLOAD_PROJECT_PDF(generationId), {
       responseType: 'blob'
     });
-
-    // Create download link
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-
-    return { success: true };
+    return res.data
   } catch (err) {
-    throw err.response?.data || { detail: "Failed to download diagram" };
+    throw err.response?.data || { detail: "Failed to fetch pdf" };
   }
 };
 

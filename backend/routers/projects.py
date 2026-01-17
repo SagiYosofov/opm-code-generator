@@ -56,7 +56,7 @@ async def get_project_by_id(generation_id: str):
 
 
 @router.get("/{generation_id}/pdf")
-async def download_pdf(generation_id: str):
+async def get_pdf_by_id(generation_id: str):
     """
     Download the PDF diagram for a specific project.
 
