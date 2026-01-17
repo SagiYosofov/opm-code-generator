@@ -1,17 +1,91 @@
+/* ============================================
+   THEME VARIABLES
+   ============================================ */
+:root[data-theme="light"] {
+  /* Background Colors */
+  --bg-primary: #f5f6fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f8f9fa;
+
+  /* Text Colors */
+  --text-primary: #333;
+  --text-secondary: #555;
+  --text-tertiary: #666;
+  --text-muted: #999;
+
+  /* Border Colors */
+  --border-color: #e5e7eb;
+  --border-light: #f0f0f0;
+
+  /* Component Colors */
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+
+  /* Accent Colors */
+  --accent-primary: #007bff;
+  --accent-hover: #0056b3;
+  --accent-success: #28a745;
+  --accent-danger: #dc3545;
+
+  /* Code Preview */
+  --code-bg: #1e1e1e;
+  --code-text: #d4d4d4;
+}
+
+:root[data-theme="dark"] {
+  /* Background Colors */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
+
+  /* Text Colors */
+  --text-primary: #e4e4e4;
+  --text-secondary: #b8b8b8;
+  --text-tertiary: #999;
+  --text-muted: #666;
+
+  /* Border Colors */
+  --border-color: #404040;
+  --border-light: #4a4a4a;
+
+  /* Component Colors */
+  --card-bg: #2d2d2d;
+  --card-shadow: rgba(0, 0, 0, 0.5);
+  --input-bg: #3a3a3a;
+  --input-border: #555;
+
+  /* Accent Colors */
+  --accent-primary: #4a9eff;
+  --accent-hover: #3b7dd9;
+  --accent-success: #51cf66;
+  --accent-danger: #ff6b6b;
+
+  /* Code Preview */
+  --code-bg: #1e1e1e;
+  --code-text: #d4d4d4;
+}
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+
 /* Reset some defaults */
 body, html {
   margin: 0;
   padding: 0;
 
   /*
-    Use the navbar height variable from navbar.css
-    Fallback: 60px if variable not set
+    CRITICAL: Uses --navbar-height defined in Navbar.css
+    This ensures body padding matches navbar height exactly
   */
   padding-top: var(--navbar-height, 60px);
 
   font-family: Arial, sans-serif;
-  background: #f5f6fa;
-  color: #333;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Global layout wrapper for all pages */
@@ -19,9 +93,8 @@ body, html {
   width: 100%;
 
   /*
-    Calculate min-height using navbar height variable
-    Automatically adjusts when navbar height changes
-    Fallback: 100vh - 60px if variable not set
+    CRITICAL: Calculate min-height using same --navbar-height variable
+    Ensures content area fills screen properly
   */
   min-height: calc(100vh - var(--navbar-height, 60px));
 
