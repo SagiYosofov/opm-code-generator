@@ -1,8 +1,15 @@
+/* ============================================
+   PROJECTS PAGE
+   LIGHT/DARK MODE SUPPORT
+   ============================================ */
+
 /* Projects Layout */
 .projects-layout {
   padding: 40px 20px;
   align-items: flex-start;
   min-height: auto;
+  background: var(--bg-primary);
+  transition: background 0.3s ease;
 }
 
 .projects-container {
@@ -14,9 +21,10 @@
   text-align: center;
   font-size: 32px;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0 0 40px 0;
   letter-spacing: -0.5px;
+  transition: color 0.3s ease;
 }
 
 /* ============================================
@@ -34,16 +42,18 @@
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
+  border: 4px solid var(--bg-tertiary);
+  border-top: 4px solid var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  transition: border-color 0.3s ease;
 }
 
 .loading-container p {
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 @keyframes spin {
@@ -57,9 +67,10 @@
 .empty-state {
   text-align: center;
   padding: 80px 20px;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--card-shadow);
+  transition: all 0.3s ease;
 }
 
 .empty-icon {
@@ -70,20 +81,22 @@
 
 .empty-state h2 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 10px 0;
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
 .empty-state p {
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0 0 30px 0;
   line-height: 1.5;
+  transition: color 0.3s ease;
 }
 
 .cta-button {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
   color: white;
   padding: 14px 30px;
   border: none;
@@ -96,10 +109,18 @@
   font-family: inherit;
 }
 
+:root[data-theme="dark"] .cta-button {
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+}
+
 .cta-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
-  background: linear-gradient(135deg, #0069d9 0%, #004494 100%);
+  background: linear-gradient(135deg, var(--accent-hover) 0%, #0d47a1 100%);
+}
+
+:root[data-theme="dark"] .cta-button:hover {
+  box-shadow: 0 6px 16px rgba(74, 158, 255, 0.4);
 }
 
 .cta-button:active {
@@ -119,9 +140,9 @@
    PROJECT CARD
    ============================================ */
 .project-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--card-shadow);
   transition: all 0.3s ease;
   overflow: hidden;
   display: flex;
@@ -139,8 +160,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 20px 15px;
-  border-bottom: 2px solid #f0f0f0;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-tertiary);
+  transition: all 0.3s ease;
 }
 
 .project-language {
@@ -157,8 +179,9 @@
 .language-name {
   font-size: 14px;
   font-weight: 600;
-  color: #007bff;
+  color: var(--accent-primary);
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 }
 
 .delete-icon-btn {
@@ -187,19 +210,21 @@
 .project-title {
   font-size: 18px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
   word-break: break-word;
   line-height: 1.3;
+  transition: color 0.3s ease;
 }
 
 .project-date {
   font-size: 13px;
-  color: #666;
+  color: var(--text-tertiary);
   margin: 0 0 15px 0;
   display: flex;
   align-items: center;
   gap: 5px;
+  transition: color 0.3s ease;
 }
 
 .project-date::before {
@@ -222,18 +247,20 @@
 }
 
 .info-label {
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   flex-shrink: 0;
+  transition: color 0.3s ease;
 }
 
 .info-value {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 600;
   font-family: 'Courier New', monospace;
   font-size: 13px;
   text-align: right;
   word-break: break-all;
+  transition: color 0.3s ease;
 }
 
 /* Project Actions */
@@ -241,19 +268,19 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .action-btn {
   padding: 12px;
   border: none;
-  background: white;
-  color: #666;
+  background: var(--card-bg);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,18 +293,18 @@
 }
 
 .action-btn:hover {
-  background: #f8f9fa;
-  color: #333;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .view-btn:hover {
-  background: #e3f2fd;
-  color: #007bff;
+  background: var(--bg-tertiary);
+  color: var(--accent-primary);
 }
 
 .download-btn:hover {
-  background: #e8f5e9;
-  color: #28a745;
+  background: var(--bg-tertiary);
+  color: var(--accent-success);
 }
 
 /* ============================================
@@ -308,14 +335,15 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   max-width: 900px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--card-shadow);
   animation: slideUp 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 @keyframes slideUp {
@@ -335,27 +363,29 @@
   justify-content: space-between;
   align-items: center;
   padding: 25px 30px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--border-color);
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--card-bg);
   z-index: 10;
+  transition: all 0.3s ease;
 }
 
 .modal-header h2 {
   font-size: 24px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
   font-weight: 700;
   word-break: break-word;
   padding-right: 20px;
+  transition: color 0.3s ease;
 }
 
 .modal-close {
   background: none;
   border: none;
   font-size: 28px;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   width: 40px;
@@ -369,8 +399,8 @@
 }
 
 .modal-close:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 /* Modal Body */
@@ -388,12 +418,13 @@
 
 .modal-section h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 15px 0;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: color 0.3s ease;
 }
 
 .modal-section h3::before {
@@ -408,17 +439,18 @@
 .explanation-text {
   font-size: 15px;
   line-height: 1.7;
-  color: #555;
+  color: var(--text-secondary);
   margin: 0;
   padding: 15px;
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
   border-radius: 8px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid var(--accent-primary);
+  transition: all 0.3s ease;
 }
 
 .code-preview {
-  background: #1e1e1e;
-  color: #d4d4d4;
+  background: var(--code-bg);
+  color: var(--code-text);
   padding: 20px;
   border-radius: 8px;
   overflow-x: auto;
@@ -426,6 +458,7 @@
   max-height: 400px;
   overflow-y: auto;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
 .code-preview code {
@@ -433,6 +466,7 @@
   font-size: 13px;
   line-height: 1.6;
   white-space: pre;
+  color: var(--code-text);
 }
 
 /* Custom scrollbar for code preview */
@@ -442,17 +476,17 @@
 }
 
 .code-preview::-webkit-scrollbar-track {
-  background: #2d2d2d;
+  background: var(--bg-secondary);
   border-radius: 4px;
 }
 
 .code-preview::-webkit-scrollbar-thumb {
-  background: #555;
+  background: var(--border-color);
   border-radius: 4px;
 }
 
 .code-preview::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  background: var(--border-light);
 }
 
 /* Modal Actions */
@@ -460,10 +494,11 @@
   display: flex;
   gap: 10px;
   padding: 25px 30px;
-  border-top: 2px solid #f0f0f0;
-  background: #f8f9fa;
+  border-top: 2px solid var(--border-color);
+  background: var(--bg-tertiary);
   position: sticky;
   bottom: 0;
+  transition: all 0.3s ease;
 }
 
 .modal-btn {
@@ -483,19 +518,27 @@
 }
 
 .download-pdf-btn {
-  background: #007bff;
+  background: var(--accent-primary);
   color: white;
   box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
 }
 
+:root[data-theme="dark"] .download-pdf-btn {
+  box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+}
+
 .download-pdf-btn:hover {
-  background: #0056b3;
+  background: var(--accent-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
 }
 
+:root[data-theme="dark"] .download-pdf-btn:hover {
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
 .download-code-btn {
-  background: #28a745;
+  background: var(--accent-success);
   color: white;
   box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
 }
@@ -507,7 +550,7 @@
 }
 
 .delete-btn {
-  background: #dc3545;
+  background: var(--accent-danger);
   color: white;
   box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
 }
@@ -621,7 +664,7 @@
   }
 
   .project-card {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px var(--card-shadow);
   }
 
   .project-header {
@@ -642,7 +685,7 @@
 
   .action-btn {
     border-right: none;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color);
     padding: 14px;
   }
 
