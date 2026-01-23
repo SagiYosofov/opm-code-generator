@@ -231,5 +231,5 @@ body, html {
   /* Push the container down by the navbar height
      plus a little extra (e.g., 15px) for breathing room
   */
-  margin-top: calc(var(--navbar-height, 60px) + 15px);
+  margin-top: calc(var(--navbar-height, 60px) + 1px);
 }
