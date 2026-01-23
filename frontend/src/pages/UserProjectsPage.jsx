@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   getUserProjects,
@@ -10,6 +11,7 @@ import "../styles/UserProjectsPage.css";
 
 const UserProjectsPage = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]); // Array of user projects from the backend.
   const [loading, setLoading] = useState(true); // True while data is are being fetched from backend.
   const [selectedProject, setSelectedProject] = useState(null); // Stores the project the user wants to view in modal.
@@ -174,7 +176,7 @@ const UserProjectsPage = () => {
             <p>Start by generating code from OPM diagrams!</p>
             <button
               className="cta-button"
-              onClick={() => window.location.href = "/opm_code_generator"}
+              onClick={() => navigate("/opm_code_generator")}
             >
               Generate Code
             </button>
